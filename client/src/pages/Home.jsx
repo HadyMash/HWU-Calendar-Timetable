@@ -89,8 +89,9 @@ export function Home() {
                 <label htmlFor={'courses'}>Courses:</label>
               </td>
               <td>
-                {/* TODO: add search functionality */}
+                {/* TODO: add search functionality*/}
                 {/* TODO: allow users adding custom values own courses because the course ids also have Semesters in them (S1)*/}
+                {/* TODO: get list of courses from server and store for a short while*/}
                 <select
                   id={'courses'}
                   name="courses"
