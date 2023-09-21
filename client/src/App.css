@@ -26,6 +26,6 @@ table td {
     text-align: start;
 }
 
-table select {
-    width: 100%;
+table td:has(div) {
+    width: 85%;
 }
