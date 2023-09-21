@@ -68,16 +68,12 @@ export function Home() {
     // make call to rest api
     setLoadingSubmit(true);
     try {
-      // TODO: serialize in a better way to avoid comma in course name
-      const serializedCourses = courses.join(',');
-      const response = await axios.get('http://localhost:3000/timetable', {
-        params: {
-          courses: serializedCourses,
-          semester,
-          startWeek,
-          endWeek,
-          alert,
-        },
+      const response = await axios.post('http://localhost:3000/timetable', {
+        courses,
+        semester,
+        startWeek,
+        endWeek,
+        alert,
       });
       console.log(response);
     } catch (error) {

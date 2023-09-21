@@ -7,33 +7,30 @@ const port = 3000;
 app.use(express.json());
 app.use(cors());
 
-app.get('/timetable', (req, res) => {
+app.post('/timetable', (req, res) => {
   try {
-    const semester = req.query.semester;
+    const semester = req.body.semester;
     if (!semester) {
       res.status(400).send('Semester is required');
       return;
     }
-    const startWeek = req.query.startWeek;
+    const startWeek = req.body.startWeek;
     if (!startWeek) {
       res.status(400).send('Week from is required');
       return;
     }
-    const endWeek = req.query.endWeek;
+    const endWeek = req.body.endWeek;
     if (!endWeek) {
       res.status(400).send('Week to is required');
       return;
     }
-    const alert = req.query.alert ?? 0;
+    const alert = req.body.alert ?? 0;
 
-    const serializedCourses = req.query.courses;
-    if (!serializedCourses) {
+    const courses = req.body.courses;
+    if (!courses) {
       res.status(400).send('Courses are required');
       return;
     }
-
-    // TODO: serialize in a better way to avoid comma in course name
-    const courses = serializedCourses.split(',');
 
     res.send({
       courses,
