@@ -1,3 +1,7 @@
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+import { useRef } from 'react';
+
 export function Home() {
   /* Things to implement
    * 1. from week n
@@ -5,14 +9,60 @@ export function Home() {
    * 3. detect overlaps for multiple classrooms for the same subject
    * 4. alerts before event
    */
+  const coursesRef = useRef(null);
+  const semesterRef = useRef(null);
+  const startWeekRef = useRef(null);
+  const endWeekRef = useRef(null);
+  const alertRef = useRef(null);
 
   const handleSubmit = (e) => {
-    // ! temp
-    console.log(e);
-    // TODO: validate
-    // make call to rest api
-  };
+    e.preventDefault();
 
+    const showErrorMessage = (message) => {
+      toast.error(message, {
+        position: 'top-right',
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: 'light',
+      });
+    };
+
+    const courses = Array.from(coursesRef.current.selectedOptions).map(
+      (option) => option.value,
+    );
+    const semester = semesterRef.current.value;
+    const startWeek = startWeekRef.current.value;
+    const endWeek = endWeekRef.current.value;
+    const alert = alertRef.current.value;
+
+    // validate
+    let valid = true;
+
+    if (!courses || courses.length === 0) {
+      showErrorMessage('Please select at least one course');
+      valid = false;
+    }
+    if (!semester) {
+      showErrorMessage('Please select a semester');
+      valid = false;
+    }
+    if (!startWeek) {
+      showErrorMessage('Please select a start week');
+      valid = false;
+    }
+    if (!endWeek) {
+      showErrorMessage('Please select an end week');
+      valid = false;
+    }
+
+    if (!valid) return;
+
+    // TODO: make call to rest api
+  };
   const generateWeekOptions = () => {
     const options = new Array(12);
 
@@ -40,11 +90,13 @@ export function Home() {
               </td>
               <td>
                 {/* TODO: add search functionality */}
+                {/* TODO: allow users adding custom values own courses because the course ids also have Semesters in them (S1)*/}
                 <select
                   id={'courses'}
                   name="courses"
                   multiple="multiple"
                   size={8}
+                  ref={coursesRef}
                 >
                   <option value="B17CA-S1">
                     B17CA-S1 - Principles of Chemistry
@@ -844,7 +896,12 @@ export function Home() {
                 <label htmlFor={'semester'}>Semester:</label>
               </td>
               <td>
-                <select id={'semester'} name="semester">
+                <select
+                  id={'semester'}
+                  name="semester"
+                  defaultValue={'September Semester'}
+                  ref={semesterRef}
+                >
                   <option value="September Semester">September Semester</option>
                   <option value="January Semester">January Semester</option>
                   {/* TODO: add support for may and may dep semesters */}
@@ -866,6 +923,7 @@ export function Home() {
                   id={'start-week'}
                   name={'start-week'}
                   defaultValue={'Week 1'}
+                  ref={startWeekRef}
                 >
                   {generateWeekOptions()}
                 </select>
@@ -880,6 +938,7 @@ export function Home() {
                   id={'end-week'}
                   name={'end-week'}
                   defaultValue={'Week 12'}
+                  ref={endWeekRef}
                 >
                   {generateWeekOptions(false)}
                 </select>
@@ -890,7 +949,7 @@ export function Home() {
                 <label htmlFor={'alert'}>Default alert:</label>
               </td>
               <td>
-                <select id={'alert'} name="alert">
+                <select id={'alert'} name="alert" ref={alertRef}>
                   {/* TODO: add more options */}
                   <option value="0">None</option>
                 </select>
@@ -900,6 +959,7 @@ export function Home() {
         </table>
         <button type="submit">Submit</button>
       </form>
+      <ToastContainer />
     </div>
   );
 }
