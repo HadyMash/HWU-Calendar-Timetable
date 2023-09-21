@@ -130,10 +130,7 @@ export function Home() {
                 <Select
                   id={'semester'}
                   name="semester"
-                  defaultValue={{
-                    value: 'September Semester',
-                    label: 'September Semester',
-                  }}
+                  defaultValue={semesters[0]}
                   isDisabled={loadingSubmit}
                   isSearchable={true}
                   options={semesters}

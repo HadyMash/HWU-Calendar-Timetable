@@ -1166,6 +1166,6 @@ export const courses = [
 */
 
 export const semesters = [
-  { value: 'September Semester', label: 'September Semester' },
-  { value: 'January Semester', label: 'January Semester' },
+  { value: '2;3;4;5;6;7;8;9;10;11;12;13', label: 'September Semester' },
+  { value: '20;21;22;23;24;25;26;27;28;29;30;31', label: 'January Semester' },
 ];
