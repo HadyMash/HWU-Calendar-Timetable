@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react';
+import { useRef, useState } from 'react';
 import axios from 'axios';
 import Select from 'react-select';
 import { ToastContainer, toast } from 'react-toastify';
@@ -105,7 +105,7 @@ export function Home() {
           <tbody>
             <tr>
               <td>
-                <label htmlFor={'courses'}>Courses:</label>
+                <label>Courses:</label>
               </td>
               <td>
                 {/* TODO: get list of courses from server and store for a short while*/}
@@ -124,14 +124,16 @@ export function Home() {
             </tr>
             <tr>
               <td>
-                <label htmlFor={'semester'}>Semester:</label>
+                <label>Semester:</label>
               </td>
               <td>
-                {/*TODO: fix default value not working*/}
                 <Select
                   id={'semester'}
                   name="semester"
-                  defaultValue={'September Semester'}
+                  defaultValue={{
+                    value: 'September Semester',
+                    label: 'September Semester',
+                  }}
                   isDisabled={loadingSubmit}
                   isSearchable={true}
                   options={semesters}
@@ -141,14 +143,13 @@ export function Home() {
             </tr>
             <tr>
               <td>
-                <label htmlFor={'start-week'}>From week:</label>
+                <label>From week:</label>
               </td>
               <td>
-                {/*TODO: fix default value not working*/}
                 <Select
                   id={'start-week'}
                   name={'start-week'}
-                  defaultValue={'Week 1'}
+                  defaultValue={{ value: 'Week 1', label: 'Week 1' }}
                   isDisabled={loadingSubmit}
                   isSearchable={true}
                   options={generateWeekOptions()}
@@ -158,14 +159,13 @@ export function Home() {
             </tr>
             <tr>
               <td>
-                <label htmlFor={'end-week'}>To week:</label>
+                <label>To week:</label>
               </td>
               <td>
-                {/*TODO: fix default value not working*/}
                 <Select
                   id={'end-week'}
                   name={'end-week'}
-                  defaultValue={'Week 12'}
+                  defaultValue={{ value: 'Week 12', label: 'Week 12' }}
                   isDisabled={loadingSubmit}
                   isSearchable={true}
                   options={generateWeekOptions()}
@@ -175,7 +175,7 @@ export function Home() {
             </tr>
             <tr>
               <td>
-                <label htmlFor={'alert'}>Default alert:</label>
+                <label>Default alert:</label>
               </td>
               <td>
                 <Select

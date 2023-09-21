@@ -29,3 +29,21 @@ table td {
 table td:has(div) {
     width: 85%;
 }
+
+form button {
+    margin-top: 20px;
+    height: 40px;
+    border-radius: 5px;
+    border: none;
+    background-color: #4CAF50;
+    color: white;
+    font-size: 16px;
+    font-weight: 600;
+    padding: 0 20px;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+}
+
+form button:hover {
+    background-color: #45a049;
+}
