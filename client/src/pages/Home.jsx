@@ -29,759 +29,812 @@ export function Home() {
     <div className={'home'}>
       <div className={'welcome-text'}>
         <h1>Welcome to Heriot-Watt University Calendar Timetable</h1>
-        <p>
-          Select your program to add your courses to your calendar as events
-        </p>
+        <p>Please select your courses to add them to your calendar as events</p>
       </div>
       <form onSubmit={handleSubmit}>
         <table>
           <tbody>
             <tr>
               <td>
-                <label htmlFor={'student-group'}>Student Group:</label>
+                <label htmlFor={'courses'}>Courses:</label>
               </td>
               <td>
-                <select id={'student-group'} name={'student-group'}>
-                  <option value="B311-1">
-                    B311-EEE - BEng Electrical and Electronic Engineering - Year
-                    1 - September Semester
+                {/* TODO: add search functionality */}
+                <select
+                  id={'courses'}
+                  name="courses"
+                  multiple="multiple"
+                  size={8}
+                >
+                  <option value="B17CA-S1">
+                    B17CA-S1 - Principles of Chemistry
                   </option>
-                  <option value="#SPLUSA0306F">
-                    B311-EEE - BEng Electrical and Electronic Engineering - Year
-                    2 - September Semester
+                  <option value="B18AP-S1">
+                    B18AP-S1 - Chemical Thermodynamics &amp; Introductory
+                    Chemical Kinetics for Chemical Engineers
                   </option>
-                  <option value="#SPLUSA03070">
-                    B311-EEE - BEng Electrical and Electronic Engineering - Year
-                    3 - September Semester
+                  <option value="B27MW-S1">
+                    B27MW-S1 - Mechanics, Fields and Forces
                   </option>
-                  <option value="#SPLUSA03071">
-                    B311-EEE - BEng Electrical and Electronic Engineering - Year
-                    4 - September Semester
+                  <option value="B30EI-S1">
+                    B30EI-S1 - Advanced Analogue Electronics
                   </option>
-                  <option value="#SPLUSCD340D">
-                    B320-RAI - MSc. Robotics - Year 1 - September Semester
+                  <option value="B30EJ-S1">B30EJ-S1 - Linear Control</option>
+                  <option value="B30UB-S1">
+                    B30UB-S1 - 4th Year Project 1
                   </option>
-                  <option value="#SPLUSE76D3A">
-                    B344-RAI - BEng Robotic Auton &amp; Inter Sys - Year 1 -
-                    September Semester
+                  <option value="B31DD-S1">B31DD-S1 - Embedded Systems</option>
+                  <option value="B31GA-S1">
+                    B31GA-S1 - Electrical Power Systems
                   </option>
-                  <option value="#SPLUS0A5AEA">
-                    B344-RAI - BEng Robotic Auton &amp; Inter Sys - Year 2 -
-                    September Semester
+                  <option value="B31SC-S1">
+                    B31SC-S1 - Digital Signal Processing
                   </option>
-                  <option value="#SPLUS91DEEE">
-                    B344-RAI - BEng Robotic Auton &amp; Inter Sys - Year 3 -
-                    September Semester
+                  <option value="B31YS-S1">
+                    B31YS-S1 - Robotics Systems Science
                   </option>
-                  <option value="#SPLUSCD340C">
-                    B344-RAI - BEng Robotic Auton &amp; Inter Sys - Year 4 -
-                    September Semester
+                  <option value="B37EE-S1">
+                    B37EE-S1 - Introduction to Electrical and Electronic
+                    Engineering
                   </option>
-                  <option value="#SPLUS14BA7B">
-                    B411-CEN - BEng in Chemical Engineering - Year 1 - September
-                    Semester
+                  <option value="B37VA-S1">
+                    B37VA-S1 - Praxis Electronic Design
                   </option>
-                  <option value="#SPLUS889840">
-                    B411-CEN - BEng in Chemical Engineering - Year 2 - September
-                    Semester
+                  <option value="B38DB-S1">
+                    B38DB-S1 - Digital Design and Programming
                   </option>
-                  <option value="#SPLUSA60092">
-                    B411-CEN - BEng in Chemical Engineering - Year 3 - September
-                    Semester
+                  <option value="B38EB-S1">
+                    B38EB-S1 - Circuits and Analysis
                   </option>
-                  <option value="#SPLUS1CA64F">
-                    B411-CEN - BEng in Chemical Engineering - Year 4 - September
-                    Semester
+                  <option value="B39AX-S1">
+                    B39AX-S1 - Engineering mathematics and statistics
                   </option>
-                  <option value="#SPLUS8AA177">
-                    B478-SUE - MSc Global Sustainability - Year 1 - September
-                    Semester
+                  <option value="B39ES-S1">
+                    B39ES-S1 - Electrical Energy Systems
                   </option>
-                  <option value="#SPLUSA03059">
-                    B511-MEG - BEng Mech Eng - Year 1 - September Semester
+                  <option value="B39SA-S1">
+                    B39SA-S1 - Signals and Systems
                   </option>
-                  <option value="#SPLUSA0306B">
-                    B511-MEG - BEng Mech Eng - Year 1 - September Semester
+                  <option value="B39SE-S1">
+                    B39SE-S1 - Semiconductor Electronics
                   </option>
-                  <option value="#SPLUSA03054">
-                    B511-MEG - BEng Mech Eng - Year 1 - September Semester
+                  <option value="B40DI-S1">
+                    B40DI-S1 - Separation Processes C
                   </option>
-                  <option value="#SPLUSA0307A">
-                    B511-MEG - BEng Mech Eng - Year 4 - September Semester
-                    (Dynamics &amp; Thermo options)
+                  <option value="B40DJ-S1">
+                    B40DJ-S1 - Sustainability Management and Process Economics
                   </option>
-                  <option value="#SPLUSA03076">
-                    B511-MEG - BEng Mech Eng - Year 4 - September Semester
-                    (Fluids &amp; Dynamics options)
+                  <option value="B40DK-S1">
+                    B40DK-S1 - Process Integration, Optimisation and Analysis
                   </option>
-                  <option value="#SPLUSA03072">
-                    B511-MEG - BEng Mech Eng - Year 4 - September Semester
-                    (Fluids &amp; Materials options)
+                  <option value="B40HE-AY">
+                    B40HE-AY - Process Engineering Design Project
                   </option>
-                  <option value="#SPLUSA03077">
-                    B511-MEG - BEng Mech Eng - Year 4 - September Semester
-                    (Fluids &amp; Thermo options)
+                  <option value="B41CE-S1">B41CE-S1 - Circular Economy</option>
+                  <option value="B41OB-S1">
+                    B41OB-S1 - Process Engineering A
                   </option>
-                  <option value="#SPLUSA03078">
-                    B511-MEG - BEng Mech Eng - Year 4 - September Semester
-                    (Materials &amp; Dynamics options)
+                  <option value="B47AA-S1">
+                    B47AA-S1 - Introduction to Process Engineering A
                   </option>
-                  <option value="#SPLUSA03079">
-                    B511-MEG - BEng Mech Eng - Year 4 - September Semester
-                    (Materials &amp; Thermo options)
+                  <option value="B47AE-S1">
+                    B47AE-S1 - Engineering Professionalism and Technical
+                    Communication
                   </option>
-                  <option value="#SPLUS14B07F">
-                    B542-MEE - BEng Mech Eng &amp; Energy Eng - Year 1 -
-                    September Semester
+                  <option value="B47AF-AY">
+                    B47AF-AY - Introduction to Process Engineering
                   </option>
-                  <option value="#SPLUS403E10">
-                    B542-MEE - BEng Mech Eng &amp; Energy Eng - Year 2 -
-                    September Semester
+                  <option value="B48BB-S1">B48BB-S1 - Fluid Mechanics</option>
+                  <option value="B48BF-S1">
+                    B48BF-S1 - Industrial Chemical Processes
                   </option>
-                  <option value="#SPLUS8214D2">
-                    B542-MEE - BEng Mech Eng &amp; Energy Eng - Year 3 -
-                    September Semester
+                  <option value="B49CA-S1">
+                    B49CA-S1 - Separation Processes A
                   </option>
-                  <option value="#SPLUS590F56">
-                    B542-MEE - BEng Mech Eng &amp; Energy Eng - Year 4 -
-                    September Semester
+                  <option value="B49CB-S1">
+                    B49CB-S1 - Business Awareness, Safety and Sustainability
                   </option>
-                  <option value="#SPLUSA03056">
-                    B564-AUE - BEng Automotive Eng - Year 1 - September Semester
+                  <option value="B49CC-S1">
+                    B49CC-S1 - Chemical Reaction Engineering
                   </option>
-                  <option value="#SPLUSA03058">
-                    B564-AUE - BEng Automotive Eng - Year 2 - September Semester
+                  <option value="B49CH-S1">B49CH-S1 - Process Control</option>
+                  <option value="B49CJ-S1">
+                    B49CJ-S1 - Sustainable Development and Engineering
+                    Management
                   </option>
-                  <option value="#SPLUSA0306C">
-                    B564-AUE - BEng Automotive Eng - Year 3 - September Semester
+                  <option value="B50DG-S1">
+                    B50DG-S1 - Engineering Design
                   </option>
-                  <option value="#SPLUSA03073">
-                    B564-AUE - BEng Automotive Eng - Year 4 - September Semester
-                    (Fluids option)
+                  <option value="B50EK-S1">B50EK-S1 - Fluids 1</option>
+                  <option value="B50EM-S1">
+                    B50EM-S1 - Advanced Mechanics of Materials 1
                   </option>
-                  <option value="#SPLUSA03074">
-                    B564-AUE - BEng Automotive Eng - Year 4 - September Semester
-                    (Materials option)
+                  <option value="B50EO-S1">B50EO-S1 - Dynamics 1</option>
+                  <option value="B50PA-S1">B50PA-S1 - Project 1</option>
+                  <option value="B50TE-S1">
+                    B50TE-S1 - Heat Exchangers and Heat Transfer
                   </option>
-                  <option value="#SPLUSA03075">
-                    B564-AUE - BEng Automotive Eng - Year 4 - September Semester
-                    (Thermo option)
+                  <option value="B51EK-S1">B51EK-S1 - Fluids 1</option>
+                  <option value="B51EM-S1">
+                    B51EM-S1 - Advanced Mechanics of Materials 1
                   </option>
-                  <option value="#SPLUSA5B488">
-                    B5A7-AME - MSc Adv Mech Eng - Year 1 - September Semester
+                  <option value="B51EO-S1">B51EO-S1 - Dynamics 1</option>
+                  <option value="B51ET-S1">
+                    B51ET-S1 - Foundations of Energy
                   </option>
-                  <option value="#SPLUS89BA23">
-                    B5B7-ENE - MSc in Energy - Year 1 - September Semester
+                  <option value="B51GE-S1">
+                    B51GE-S1 - Renewable Energy Technologies
                   </option>
-                  <option value="#SPLUSD267CF">
-                    B5E7-REE - MSc in Renewable Energy Engineering - Year 1 -
-                    September Semester
+                  <option value="B51GG-S1">
+                    B51GG-S1 - Computational Fluid Dynamics with Heat Transfer
                   </option>
-                  <option value="#SPLUS068A4A">
-                    B7A4-COS - BSc Combined Studies NG - Year 3 - September
-                    Semester
+                  <option value="B51GL-S1">
+                    B51GL-S1 - Economics Ren Energy
                   </option>
-                  <option value="#SPLUS84BBE5">
-                    C112-OPM - MSc Operations Management - September Semester
+                  <option value="B51TE-S1">
+                    B51TE-S1 - Heat Exchangers and Heat Transfer
                   </option>
-                  <option value="#SPLUS14B647">
-                    C115-BLC - MSc in Business Strategy, LC - September Semester
+                  <option value="B57AS-S1">
+                    B57AS-S1 - Mechanical Engineering in Context 1
                   </option>
-                  <option value="#SPLUS5E42F0">
-                    C131-BSA - MSc Analytic + Consultancy - September Semester
+                  <option value="B58DB-S1">
+                    B58DB-S1 - Design and Manufacture 2
                   </option>
-                  <option value="#SPLUS2E91AC">
-                    C147-SPM - MSc Strategic Project Management - September
-                    Semester
+                  <option value="B58FB-S1">B58FB-S1 - Fluid Mechanics A</option>
+                  <option value="B58SB-S1">
+                    B58SB-S1 - Mechanics of Materials A
                   </option>
-                  <option value="#SPLUSC090F8">
-                    C177-IFM - MSc International Fashion Marketing - September
-                    Semester
+                  <option value="B59DE-S1">
+                    B59DE-S1 - Design and Manufacture 3
                   </option>
-                  <option value="#SPLUS2E91B0">
-                    C187-HRM - MSc International Business Management with HRM -
-                    September Semester
+                  <option value="B59FC-S1">B59FC-S1 - Fluid Mechanics B</option>
+                  <option value="B59SC-S1">
+                    B59SC-S1 - Mechanics of Materials B
                   </option>
-                  <option value="#SPLUS84BBE7">
-                    C1A4-LSS - MSc Logistics &amp; Supply Chain Management with
-                    Lean Six Sigma - September Semester
+                  <option value="B81PI-S1">
+                    B81PI-S1 - Professional and Industrial Studies
                   </option>
-                  <option value="#SPLUS2E91B3">
-                    C1A7-LSC - MSc Logistics &amp; Supply Chain Management -
-                    September Semester
+                  <option value="B86EC-S1">B86EC-S1 - Entry Chemistry</option>
+                  <option value="B86EM-S1">B86EM-S1 - Entry Mathematics</option>
+                  <option value="B86EP-S1">B86EP-S1 - Entry Physics</option>
+                  <option value="C10BS-S1">
+                    C10BS-S1 - Business Project 1
                   </option>
-                  <option value="#SPLUSA2AA83">
-                    C1BA-BBA - Bachelor of Business Admin (Hons) - Year 1 -
-                    September Semester
+                  <option value="C10HD-S1">
+                    C10HD-S1 - Management Dissertation 1
                   </option>
-                  <option value="#SPLUS2E911C">
-                    C1BA-BBA - Bachelor of Business Admin (Hons) - Year 2 -
-                    September Semester
+                  <option value="C10IB-S1">
+                    C10IB-S1 - Global Business Analysis 1: International Markets
+                    and Strategy
                   </option>
-                  <option value="#SPLUS59AC52">
-                    C1BA-BBA - Bachelor of Business Admin (Hons) - Year 3 -
-                    September Semester
+                  <option value="C10IE-S1">
+                    C10IE-S1 - International Entrepreneurship
                   </option>
-                  <option value="#SPLUSE0C451">
-                    C1BA-BBA - Bachelor of Business Admin (Hons) - Year 4 -
-                    September Semester
+                  <option value="C10LM-S1">C10LM-S1 - Leisure Marketing</option>
+                  <option value="C10MB-S1">
+                    C10MB-S1 - Managing Business Performance
                   </option>
-                  <option value="#SPLUS183E3A">
-                    C1BB-BBA - Bachelor of Business Admin - Year 1 - September
-                    Semester
+                  <option value="C11BA-S1">
+                    C11BA-S1 - Business Analytics and Introduction to Big Data
                   </option>
-                  <option value="#SPLUS183E3B">
-                    C1BB-BBA - Bachelor of Business Admin - Year 2 - September
-                    Semester
+                  <option value="C11BC-S1">
+                    C11BC-S1 - Management Consultancy
                   </option>
-                  <option value="#SPLUS183E3C">
-                    C1BB-BBA - Bachelor of Business Admin - Year 3 - September
-                    Semester
+                  <option value="C11CC-S1">
+                    C11CC-S1 - Contemporary Consumers
                   </option>
-                  <option value="#SPLUS65A60F">
-                    C1D1-DIG - MSc Digital Marketing - September Semester
+                  <option value="C11CS-S1">
+                    C11CS-S1 - Competitive Strategy
                   </option>
-                  <option value="#SPLUS2E91AE">
-                    C1E7-MKG - MSc International Business Management with
-                    Marketing - September Semester
+                  <option value="C11DX-S1">
+                    C11DX-S1 - Digital Customer Experience
                   </option>
-                  <option value="#SPLUS2E91AF">
-                    C1G7-FIN - MSc International Business Management with
-                    Finance - September Semester
+                  <option value="C11FS-S1">
+                    C11FS-S1 - Fundamentals of Lean Six Sigma
                   </option>
-                  <option value="#SPLUS2D37C3">
-                    C1GM-IBM - MA International Business Management - Year 1 -
-                    September Semester
+                  <option value="C11FT-S1">
+                    C11FT-S1 - Freight Transport and Warehouse Management
                   </option>
-                  <option value="#SPLUS2D37C4">
-                    C1GM-IBM - MA International Business Management - Year 2 -
-                    September Semester
+                  <option value="C11IB-S1">
+                    C11IB-S1 - International Business Context
                   </option>
-                  <option value="#SPLUS2D383B">
-                    C1GM-IBM - MA International Business Management - Year 3 -
-                    September Semester
+                  <option value="C11IS-S1">
+                    C11IS-S1 - International Strategic Marketing
                   </option>
-                  <option value="#SPLUS96F1E3">
-                    C1GM-IBM - MA International Business Management - Year 4 -
-                    September Semester
+                  <option value="C11IV-S1">
+                    C11IV-S1 - Strategic Innovation Management
                   </option>
-                  <option value="#SPLUS365BEB">
-                    C1GN-IBM - BA International Business Management - Year 2 -
-                    September Semester
+                  <option value="C11LD-S1">C11LD-S1 - Leadership</option>
+                  <option value="C11LS-S1">
+                    C11LS-S1 - Strategies for Managing Supply Chains
                   </option>
-                  <option value="#SPLUS5F1DBF">
-                    C1GN-IBM - BA International Business Management - Year 3 -
-                    September Semester
+                  <option value="C11MG-S1">C11MG-S1 - Marketing</option>
+                  <option value="C11OE-S1">
+                    C11OE-S1 - Operations Management
                   </option>
-                  <option value="#SPLUSA299B7">
-                    C1H1-IMI - MSc in Industrial Mgt - September Semester
+                  <option value="C11OH-S1">
+                    C11OH-S1 - Organisational Behaviour
                   </option>
-                  <option value="#SPLUS7B0372">
-                    C1I1-MNN - MSc in Managing Innovation - September Semester
+                  <option value="C11SA-S1">
+                    C11SA-S1 - Supply Chain Risk and Adaptation
                   </option>
-                  <option value="#SPLUS5F1BD2">
-                    C1IM-IBK - MA International Business Management with
-                    Marketing - Year 2 - September Semester
+                  <option value="C11SH-S1">C11SH-S1 - Strategic Change</option>
+                  <option value="C11SP-S1">
+                    C11SP-S1 - Strategic Project Management
                   </option>
-                  <option value="#SPLUS5F1C4E">
-                    C1IM-IBK - MA International Business Management with
-                    Marketing - Year 3 - September Semester
+                  <option value="C16AL-S1">
+                    C16AL-S1 - Approaches to Learning
                   </option>
-                  <option value="#SPLUS5F1C4F">
-                    C1IM-IBK - MA International Business Management with
-                    Marketing - Year 4 - September Semester
+                  <option value="C16BM-S1">
+                    C16BM-S1 - Business Management
                   </option>
-                  <option value="#SPLUSA1A28A">
-                    C1JM-IBH - MA International Business Management with Human
-                    Resource Management - Year 1- September Semester
+                  <option value="C16LP-S1">
+                    C16LP-S1 - Introduction to Leadership, Motivation and
+                    Psychology
                   </option>
-                  <option value="#SPLUS9DB47D">
-                    C1JM-IBH - MA International Business Management with Human
-                    Resource Management - Year 2 - September Semester
+                  <option value="C17EB-S1">
+                    C17EB-S1 - Management in a Global Context
                   </option>
-                  <option value="#SPLUS9DB47E">
-                    C1JM-IBH - MA International Business Management with Human
-                    Resource Management - Year 3 - September Semester
+                  <option value="C17MK-S1">
+                    C17MK-S1 - Introduction to Marketing
                   </option>
-                  <option value="#SPLUS9DB47F">
-                    C1JM-IBH - MA International Business Management with Human
-                    Resource Management - Year 4 - September Semester
+                  <option value="C18FM-S1">
+                    C18FM-S1 - Fundamentals of Marketing
                   </option>
-                  <option value="#SPLUS939D34">
-                    C1KM-IBE - MA International Business Management with
-                    Enterprise - Year 1 - September Semester
+                  <option value="C18HM-S1">
+                    C18HM-S1 - Human Resource Management
                   </option>
-                  <option value="#SPLUS939D47">
-                    C1KM-IBE - MA International Business Management with
-                    Enterprise - Year 2 - September Semester
+                  <option value="C19BV-S1">
+                    C19BV-S1 - Business Venturing
                   </option>
-                  <option value="#SPLUS939DDA">
-                    C1KM-IBE - MA International Business Management with
-                    Enterprise - Year 3 - September Semester
+                  <option value="C19DA-S1">
+                    C19DA-S1 - Digital Analytics in Marketing
                   </option>
-                  <option value="#SPLUS5F1BCA">
-                    C1KM-IBE - MA International Business Management with
-                    Enterprise - Year 4 - September Semester
+                  <option value="C19EL-S1">C19EL-S1 - Employment Law</option>
+                  <option value="C19GM-S1">
+                    C19GM-S1 - Global Strategic Marketing
                   </option>
-                  <option value="#SPLUSA2EC2E">
-                    C1M2-MAR - MA in Marketing - Year 1 - September Semester
+                  <option value="C19LS-S1">
+                    C19LS-S1 - Logistics and Supply Chain Management
                   </option>
-                  <option value="#SPLUS51186B">
-                    C1M2-MAR - MA in Marketing - Year 2 - September Semester
+                  <option value="C19PT-S1">
+                    C19PT-S1 - Project Management
                   </option>
-                  <option value="#SPLUS91AF8B">
-                    C1M2-MAR - MA in Marketing - Year 3 - September Semester
+                  <option value="C19RM-S1">
+                    C19RM-S1 - Responsible Marketing
                   </option>
-                  <option value="#SPLUS5F1BD4">
-                    C1NM-OPL - MA International Business Management with
-                    Operations - Year 1 - September Semester
+                  <option value="C19RT-S1">
+                    C19RT-S1 - Resourcing and Talent Management
                   </option>
-                  <option value="#SPLUS5F1BD3">
-                    C1NM-OPL - MA International Business Management with
-                    Operations - Year 2 - September Semester
+                  <option value="C30CX-S1">
+                    C30CX-S1 - Agency Theory and Corporate Governance
                   </option>
-                  <option value="#SPLUS5F1C50">
-                    C1NM-OPL - MA International Business Management with
-                    Operations - Year 3 - September Semester
+                  <option value="C30DX-S1">
+                    C30DX-S1 - Accounting and Finance Dissertation 1
                   </option>
-                  <option value="#SPLUS37D512">
-                    C1NM-OPL - MA International Business Management with
-                    Operations - Year 4 - September Semester
+                  <option value="C30HX-S1">C30HX-S1 - Accounting Theory</option>
+                  <option value="C30MX-S1">
+                    C30MX-S1 - Managerial Accounting: Decision Making
                   </option>
-                  <option value="#SPLUSD33BEE">
-                    C1RD-IDM - MSc in International Marketing with Digital
-                    Marketing - September Semester
+                  <option value="C31CF-S1">C31CF-S1 - Corporate Finance</option>
+                  <option value="C31CG-S1">
+                    C31CG-S1 - Corporate Governance and Sustainability
                   </option>
-                  <option value="#SPLUS65A701">
-                    C1RK-IMK - MSc International Marketing - September Semester
+                  <option value="C31CM-S1">C31CM-S1 - Capital Markets</option>
+                  <option value="C31FF-S1">
+                    C31FF-S1 - Finance and Financial Reporting
                   </option>
-                  <option value="#SPLUS7BB414">
-                    C301-ABF - MA Accounting and Business Finance - Year 2 -
-                    September Semester
+                  <option value="C31FI-S1">
+                    C31FI-S1 - Financial Accounting and Reporting
                   </option>
-                  <option value="#SPLUS5F1EEA">
-                    C301-ABF - MA Accounting and Business Finance - Year 3 -
-                    September Semester
+                  <option value="C31FM-S1">C31FM-S1 - Financial Markets</option>
+                  <option value="C31FN-S1">
+                    C31FN-S1 - Financial Analysis
                   </option>
-                  <option value="#SPLUS80D8D0">
-                    C301-ABF - MA Accounting and Business Finance - Year 4 -
-                    September Semester
+                  <option value="C31FR-S1">
+                    C31FR-S1 - Financial Reporting
                   </option>
-                  <option value="#SPLUS829546">
-                    C311-ACF - BA Accountancy &amp; Finance - Year 2 - September
-                    Semester
+                  <option value="C31IA-S1">
+                    C31IA-S1 - International Accounting Standards
                   </option>
-                  <option value="#SPLUS183E5A">
-                    C311-ACF - BA Accountancy &amp; Finance - Year 3 - September
-                    Semester
+                  <option value="C37AF-S1">
+                    C37AF-S1 - Introduction to Accounting and Finance
                   </option>
-                  <option value="#SPLUS4FDB93">
-                    C31M-ACF - MA Accountancy &amp; Finance - Year 1 - September
-                    Semester
+                  <option value="C38FI-S1">
+                    C38FI-S1 - Fundamentals of Finance
                   </option>
-                  <option value="#SPLUS183E5D">
-                    C31M-ACF - MA Accountancy &amp; Finance - Year 2 - September
-                    Semester
+                  <option value="C38PA-S1">
+                    C38PA-S1 - Principles of Accounting
                   </option>
-                  <option value="#SPLUS183E5B">
-                    C31M-ACF - MA Accountancy &amp; Finance - Year 3 - September
-                    Semester
+                  <option value="C38PF-S1">
+                    C38PF-S1 - Personal Finance and Investment Ethics
                   </option>
-                  <option value="#SPLUS47E966">
-                    C31M-ACF - MA Accountancy &amp; Finance - Year 4 - September
-                    Semester
+                  <option value="C38SE-S1">
+                    C38SE-S1 - Social and Environmental Accounting
                   </option>
-                  <option value="#SPLUS6295E6">
-                    C327-FIM - MSc in Finance &amp; Mangement - September
-                    Semester
+                  <option value="C39AI-S1">
+                    C39AI-S1 - Intermediate Financial Accounting
                   </option>
-                  <option value="#SPLUS8788E7">
-                    C32F-FIN - MA Finance - Year 1 - September Semester
+                  <option value="C39CN-S1">
+                    C39CN-S1 - Mergers and Acquisitions
                   </option>
-                  <option value="#SPLUS5117CD">
-                    C32F-FIN - MA Finance - Year 2 - September Semester
+                  <option value="C39FN-S1">
+                    C39FN-S1 - Corporate Financial Theory
                   </option>
-                  <option value="#SPLUSBCB45C">
-                    C32F-FIN - MA Finance - Year 3 - September Semester
+                  <option value="C39FT-S1">
+                    C39FT-S1 - Fundamentals of Financial Technology
                   </option>
-                  <option value="#SPLUS51188E">
-                    C34M-ACC - MA in Accountancy - Year 1 - September Semester
+                  <option value="C39MT-S1">
+                    C39MT-S1 - Management Accounting Techniques and Decisions
                   </option>
-                  <option value="#SPLUS878878">
-                    C34M-ACC - MA in Accountancy - Year 1 - September Semester
+                  <option value="C41CW-S1">
+                    C41CW-S1 - Intercultural Communication in the Workplace
                   </option>
-                  <option value="#SPLUS2FB42C">
-                    C371-BUF - BA Business &amp; Finance - Year 1 - September
-                    Semester
+                  <option value="C47AS-S1">
+                    C47AS-S1 - Academic English for Science and Engineering
                   </option>
-                  <option value="#SPLUS47E967">
-                    C371-BUF - BA Business &amp; Finance - Year 2 - September
-                    Semester
+                  <option value="C47EM-S1">
+                    C47EM-S1 - Academic English for Management
                   </option>
-                  <option value="#SPLUS47E968">
-                    C371-BUF - BA Business &amp; Finance - Year 3 - September
-                    Semester
+                  <option value="C48IB-S1">
+                    C48IB-S1 - Intercultural Issues in Business and Management
                   </option>
-                  <option value="#SPLUS2E91B1">
-                    C377-IAF - MSc in International Accounting and Finance -
-                    September Semester
+                  <option value="C67AS-S1">C67AS-S1 - Academic Skills</option>
+                  <option value="C90CR-S1">
+                    C90CR-S1 - Cognitive Rehabilitation
                   </option>
-                  <option value="#SPLUS2FB42D">
-                    C37M-BUF - MA Business &amp; Finance - Year 1 - September
-                    Semester
+                  <option value="C90IP-S1">
+                    C90IP-S1 - Industrial and Organisational Psychology
                   </option>
-                  <option value="#SPLUS183E55">
-                    C37M-BUF - MA Business &amp; Finance - Year 2 - September
-                    Semester
+                  <option value="C90PB-S1">
+                    C90PB-S1 - Workplace Psychology
                   </option>
-                  <option value="#SPLUS183E56">
-                    C37M-BUF - MA Business &amp; Finance - Year 3 - September
-                    Semester
+                  <option value="C90PE-S1">
+                    C90PE-S1 - Psychology of Education
                   </option>
-                  <option value="#SPLUS183E57">
-                    C37M-BUF - MA Business &amp; Finance - Year 4 - September
-                    Semester
+                  <option value="C90PM-S1">
+                    C90PM-S1 - Psychology with Management Research 1
                   </option>
-                  <option value="#SPLUS2E91B2">
-                    C387-FIN - MSc in Finance - September Semester
+                  <option value="C91CE-S1">
+                    C91CE-S1 - Introduction to Human Factors
                   </option>
-                  <option value="#SPLUS5E4294">
-                    C3A1-AAC - MSc in Applied Accounting - September Semester
+                  <option value="C91CP-S1">
+                    C91CP-S1 - Coaching Psychology
                   </option>
-                  <option value="#SPLUSF8B2B4">
-                    C912-PSY - BSc Psychology - Year 1 - September Semester
+                  <option value="C91OC-S1">
+                    C91OC-S1 - Organisational Culture
                   </option>
-                  <option value="#SPLUSF8B2B7">
-                    C912-PSY - BSc Psychology - Year 2 - September Semester
-                    (Fundamentals of Marketing option)
+                  <option value="C91SO-S1">
+                    C91SO-S1 - Social and Organisational Change
                   </option>
-                  <option value="#SPLUSF8B2C7">
-                    C912-PSY - BSc Psychology - Year 2 - September Semester
-                    (Human Resource Management option)
+                  <option value="C97NY-S1">
+                    C97NY-S1 - Introduction to Psychology 1
                   </option>
-                  <option value="#SPLUS78C346">
-                    C912-PSY - BSc Psychology - Year 3 - September Semester
+                  <option value="C97RM-S1">
+                    C97RM-S1 - Research Methods and Analysis 1
                   </option>
-                  <option value="#SPLUSB2BD08">
-                    C912-PSY - BSc Psychology - Year 4 - September Semester
+                  <option value="C97SP-S1">
+                    C97SP-S1 - Academic Skills in Psychology
                   </option>
-                  <option value="#SPLUS7FED97">
-                    C913-PWM - BSc Psychology with Management - Year 1 -
-                    September Semester
+                  <option value="C98HD-S1">
+                    C98HD-S1 - Developmental Psychology
                   </option>
-                  <option value="#SPLUS764661">
-                    C913-PWM - BSc Psychology with Management - Year 2 -
-                    September Semester (Fundamentals of Marketing option)
+                  <option value="C98PH-S1">
+                    C98PH-S1 - Philosophy and History of Psychology
                   </option>
-                  <option value="#SPLUS764660">
-                    C913-PWM - BSc Psychology with Management - Year 2 -
-                    September Semester (Human Resource Management option)
+                  <option value="C98RU-S1">
+                    C98RU-S1 - Research Methods and Analysis 3
                   </option>
-                  <option value="#SPLUS1F987A">
-                    C913-PWM - BSc Psychology with Management - Year 3 -
-                    September Semester
+                  <option value="C99CL-S1">
+                    C99CL-S1 - Cognition across the Lifespan
                   </option>
-                  <option value="#SPLUS5A8ED8">
-                    C913-PWM - BSc Psychology with Management - Year 4 -
-                    September Semester
+                  <option value="C99CP-S1">
+                    C99CP-S1 - Cross-Cultural Psychology
                   </option>
-                  <option value="#SPLUS62D139">
-                    C9P7-PRB - MSc Business Psychology - September Semester
+                  <option value="C99FY-S1">
+                    C99FY-S1 - Forensic Psychology
                   </option>
-                  <option value="#SPLUSC50068">
-                    C9R7-PSC - MSc Business Psychology with Coaching - September
-                    Semester
+                  <option value="C99IW-S1">
+                    C99IW-S1 - Intelligence at Work
                   </option>
-                  <option value="#SPLUS62E105">
-                    D1B1-AEN - BEng Architectural Engineering - Year 1 -
-                    September Semester
+                  <option value="C99RH-S1">
+                    C99RH-S1 - Research Methods and Analysis 5
                   </option>
-                  <option value="#SPLUS46100A">
-                    D1B1-AEN - BEng Architectural Engineering - Year 2 -
-                    September Semester
+                  <option value="D10LP-S1">
+                    D10LP-S1 - Laboratory Project
                   </option>
-                  <option value="#SPLUS46A159">
-                    D1B1-AEN - BEng Architectural Engineering - Year 3 -
-                    September Semester
+                  <option value="D10YD-S1">
+                    D10YD-S1 - Design Project (AE)
                   </option>
-                  <option value="#SPLUS480F79">
-                    D1B1-AEN - BEng Architectural Engineering - Year 4 -
-                    September Semester
+                  <option value="D10ZA-S1">D10ZA-S1 - Dissertation (AE)</option>
+                  <option value="D11CA-S1">
+                    D11CA-S1 - Climate Change, Sustainability and Adaptation
                   </option>
-                  <option value="#SPLUSFFC981">
-                    D211-CIE - BEng Civil Engineering - Year 1 - September
-                    Semester
+                  <option value="D11ST-S1">
+                    D11ST-S1 - Sustainability for Construction Professionals
                   </option>
-                  <option value="#SPLUS62E107">
-                    D211-CIE - BEng Civil Engineering - Year 2 - September
-                    Semester
+                  <option value="D11VE-S1">
+                    D11VE-S1 - Ventilation and Air Conditioning
                   </option>
-                  <option value="#SPLUS62E108">
-                    D211-CIE - BEng Civil Engineering - Year 3 - September
-                    Semester
+                  <option value="D18AB-S1">
+                    D18AB-S1 - Acoustics and Architectural Design
                   </option>
-                  <option value="#SPLUS460FE9">
-                    D211-CIE - BEng Civil Engineering - Year 4 - September
-                    Semester
+                  <option value="D18PA-S1">D18PA-S1 - Design Project</option>
+                  <option value="D19EL-S1">
+                    D19EL-S1 - Electrical and Lighting Services for Buildings
                   </option>
-                  <option value="#SPLUSAE12C7">
-                    D2J7-CEC - MSc Civil Engineering and Construction Management
-                    - September Semester
+                  <option value="D19SO-S1">
+                    D19SO-S1 - Design Software Applications
                   </option>
-                  <option value="#SPLUSDA3F91">
-                    D307-CMQ - MSc. Commercial Management and Quantity Surveying
-                    - September Semester
+                  <option value="D19TP-S1">
+                    D19TP-S1 - Thermal Performance Studies
                   </option>
-                  <option value="#SPLUS1B4487">
-                    D3K7-CPM - MSc Construction Project Management - September
-                    Semester
+                  <option value="D20GB-S1">
+                    D20GB-S1 - Geotechnics B- Geotechnical Applications
                   </option>
-                  <option value="#SPLUSAE12C9">
-                    D3T7-FAM - MSc Facilities Management - September Semester
+                  <option value="D20SE-S1">
+                    D20SE-S1 - Structural Element Design
                   </option>
-                  <option value="#SPLUSD4CC57">
-                    D461-REF - MA Real Estate Mgmt Finance - Year 1 - September
-                    Semester
+                  <option value="D20TB-S1">
+                    D20TB-S1 - Highway Engineering
                   </option>
-                  <option value="#SPLUS220555">
-                    D461-REF - MA Real Estate Mgmt Finance - Year 2 - September
-                    Semester
+                  <option value="D20ZA-S1">
+                    D20ZA-S1 - Dissertation 1 (Civil Engineering Programme)
                   </option>
-                  <option value="#SPLUSEB65BA">
-                    D461-REF - MA Real Estate Mgmt Finance - Year 3 - September
-                    Semester
+                  <option value="D21EH-S1">
+                    D21EH-S1 - Environmental Hydrology and Water Resources
                   </option>
-                  <option value="#SPLUS22B3E9">
-                    D4D1-RES - MSc Real Estate - September Semester
+                  <option value="D21SB-S1">
+                    D21SB-S1 - Design and Analysis of Tall Steel Buildings
                   </option>
-                  <option value="#SPLUS1B4493">
-                    D4D7-RED - MSc Real Estate Management and Development -
-                    September Semester
+                  <option value="D27MA-S1">D27MA-S1 - Mechanics A</option>
+                  <option value="D28DS-S1">
+                    D28DS-S1 - Analysis of Determinate Structures
                   </option>
-                  <option value="#SPLUS19B3EF">
-                    D4K7-REI - MSc Real Estate Investment and Finance -
-                    September Semester
+                  <option value="D28HA-S1">
+                    D28HA-S1 - Hydraulics &amp; Hydrology A
                   </option>
-                  <option value="D600- ARC">
-                    D600-ARC - BA in Architecture - Year 1 - September Semester
+                  <option value="D28SM-S1">D28SM-S1 - Surveying and GIS</option>
+                  <option value="D29GS-S1">
+                    D29GS-S1 - Geology and Soil Properties
                   </option>
-                  <option value="#SPLUSF5B1D7">
-                    D600-ARC - BA in Architecture - Year 2 - September Semester
+                  <option value="D29IS-S1">
+                    D29IS-S1 - Indeterminate Structures
                   </option>
-                  <option value="#SPLUSA267E4">
-                    D600-ARC - BA in Architecture - Year 3 - September Semester
+                  <option value="D29SE-S1">
+                    D29SE-S1 - Design of Steel Elements
                   </option>
-                  <option value="#SPLUSF70DB0">
-                    D600-ARC - BA in Architecture - Year 4 - September Semester
+                  <option value="D29TA-S1">
+                    D29TA-S1 - Transport Design, Infrastructure and Society
                   </option>
-                  <option value="#SPLUS151ECA">
-                    Degree Entry programme - B80C-DEP-1 - September Semester -
-                    [Advanced Engineering Group 1]
+                  <option value="D31AT-S1">
+                    D31AT-S1 - Advanced Construction Technology
                   </option>
-                  <option value="#SPLUS09C271">
-                    Degree Entry programme - B80C-DEP-1 - September Semester -
-                    [Engineering Group 1]
+                  <option value="D31PT-S1">
+                    D31PT-S1 - Project Management: Theory and Practice
                   </option>
-                  <option value="#SPLUS09C272">
-                    Degree Entry programme - B80C-DEP-1 - September Semester -
-                    [Engineering Group 2]
+                  <option value="D31SC-S1">
+                    D31SC-S1 - Strategic Commercial and Contract Management
                   </option>
-                  <option value="#SPLUS09C273">
-                    Degree Entry programme - B80C-DEP-1 - September Semester -
-                    [Engineering Group 3]
+                  <option value="D31SQ-S1">
+                    D31SQ-S1 - Service Procurement and Provision
                   </option>
-                  <option value="#SPLUS22055B">
-                    Degree Entry programme - B80C-DEP-1 - September Semester -
-                    [Engineering Group 4]
+                  <option value="D31TA-S1">
+                    D31TA-S1 - Construction Technology
                   </option>
-                  <option value="#SPLUS1EA1AF">
-                    Degree Entry programme - B80C-DEP-1 - September Semester -
-                    [Engineering Group 5]
+                  <option value="D31VR-S1">
+                    D31VR-S1 - Value and Risk Management
                   </option>
-                  <option value="#SPLUS09C2B7">
-                    Degree Entry programme - C10C-DEP-1 - September Semester -
-                    [Advanced Management Group 1]
+                  <option value="D37TA-S1">
+                    D37TA-S1 - Construction Technology 1
                   </option>
-                  <option value="#SPLUS22055A">
-                    Degree Entry programme - C10C-DEP-1 - September Semester -
-                    [Advanced Management Group 2]
+                  <option value="D38TA-S1">
+                    D38TA-S1 - Construction Technology 2
                   </option>
-                  <option value="#SPLUS12D376">
-                    Degree Entry programme - C10C-DEP-1 - September Semester -
-                    [Advanced Management Group 3]
+                  <option value="D39PZ-S1">
+                    D39PZ-S1 - Procurement and Contracts
                   </option>
-                  <option value="#SPLUS09C2B4">
-                    Degree Entry programme - C10D-DEP-1 - September Semester -
-                    [Management Group 1]
+                  <option value="D39TA-S1">
+                    D39TA-S1 - Construction Technology 3
                   </option>
-                  <option value="#SPLUS09C2B5">
-                    Degree Entry programme - C10D-DEP-1 - September Semester -
-                    [Management Group 2]
+                  <option value="D41EP-S1">
+                    D41EP-S1 - Urban Economy and Property Markets
                   </option>
-                  <option value="#SPLUS09C2B6">
-                    Degree Entry programme - C10D-DEP-1 - September Semester -
-                    [Management Group 3]
+                  <option value="D41VC-S1">
+                    D41VC-S1 - Real Estate Appraisal and Finance
                   </option>
-                  <option value="#SPLUS220559">
-                    Degree Entry programme - C10D-DEP-1 - September Semester -
-                    [Management Group 4]
+                  <option value="D47RE-S1">
+                    D47RE-S1 - Real Estate and its Markets
                   </option>
-                  <option value="#SPLUS1EA1DB">
-                    Degree Entry programme - C10D-DEP-1 - September Semester -
-                    [Management Group 5]
+                  <option value="D48VA-S1">
+                    D48VA-S1 - Principles of Property Valuation
                   </option>
-                  <option value="#SPLUS2D00B6">
-                    Degree Entry programme - C10D-DEP-1 - September Semester -
-                    [Management Group 6]
+                  <option value="D49CA-S1">
+                    D49CA-S1 - Contemporary Appraisal
                   </option>
-                  <option value="#SPLUS09C2B3">
-                    Degree Entry programme - E10D-DEP-1 - September Semester -
-                    [Design Studies Group 1]
+                  <option value="D49IV-S1">
+                    D49IV-S1 - Real Estate Investment
                   </option>
-                  <option value="#SPLUS47CF71">
-                    Degree Entry programme - E10D-DEP-1 - September Semester -
-                    [Design Studies Group 2]
+                  <option value="D57SA-S1">
+                    D57SA-S1 - Shaping Tomorrow Together A
                   </option>
-                  <option value="#SPLUS14D748">
-                    Degree Entry programme - E10D-DEP-1 - September Semester -
-                    [Design Studies Group 3]
+                  <option value="D60DA-S1">
+                    D60DA-S1 - Dissertation (Architecture)
                   </option>
-                  <option value="E1123-1">
-                    E123-IDN - BA in Interior Design - Year 1 - September
-                    Semester
+                  <option value="D60GA-S1">
+                    D60GA-S1 - Architectural Design Studio 7
                   </option>
-                  <option value="#SPLUS35686F">
-                    E123-IDN - BA in Interior Design - Year 2 - September
-                    Semester
+                  <option value="D67AA-S1">
+                    D67AA-S1 - Architectural Design Studio 1
                   </option>
-                  <option value="#SPLUS3F087B">
-                    E123-IDN - BA in Interior Design - Year 3 - September
-                    Semester
+                  <option value="D68AR-S1">
+                    D68AR-S1 - Architectural Representation
                   </option>
-                  <option value="#SPLUSA1CF46">
-                    E123-IDN - BA in Interior Design - Year 4 - September
-                    Semester
+                  <option value="D68CA-S1">
+                    D68CA-S1 - Architectural Design Studio 3
                   </option>
-                  <option value="#SPLUS3DC65E">
-                    E1A7-IAD - MA Interior Architecture &amp; Design - September
-                    Semester
+                  <option value="D68CB-S1">
+                    D68CB-S1 - Architectural Design Studio C2
                   </option>
-                  <option value="#SPLUSEE1F15">
-                    E1B1-FBP - BA Fash Branding and Promotion - Year 1 -
-                    September Semester
+                  <option value="D69AI-S1">
+                    D69AI-S1 - The Archaeology of Ideas
                   </option>
-                  <option value="#SPLUSC6E76B">
-                    E1B1-FBP - BA Fash Branding and Promotion - Year 2 -
-                    September Semester
+                  <option value="D69EA-S1">
+                    D69EA-S1 - Architectural Design Studio 5
                   </option>
-                  <option value="#SPLUS494964">
-                    E1B1-FBP - BA Fash Branding and Promotion - Year 3 -
-                    September Semester
+                  <option value="D69TP-S1">
+                    D69TP-S1 - Integrated Technology 1
                   </option>
-                  <option value="#SPLUSEE1F16">
-                    E1C2-COM - BA in Communication Design - Year 1 - September
-                    Semester
+                  <option value="E10CA-S1">E10CA-S1 - Honours Project</option>
+                  <option value="E10IG-S1">
+                    E10IG-S1 - Final Major Project Part 1
                   </option>
-                  <option value="#SPLUSC6E76A">
-                    E1C2-COM - BA in Communication Design - Year 2 - September
-                    Semester
+                  <option value="E10MG-S1">
+                    E10MG-S1 - Global Fashion Management
                   </option>
-                  <option value="#SPLUS494966">
-                    E1C2-COM - BA in Communication Design - Year 3 - September
-                    Semester
+                  <option value="E10MS-S1">
+                    E10MS-S1 - Marketing Strategy for Design
                   </option>
-                  <option value="#SPLUS3EEDB8">
-                    E1D7-DMT - Master of Science in Design Management -
-                    September Semester
+                  <option value="E10TA-S1">E10TA-S1 - CCS Essay</option>
+                  <option value="E11DP-S1">
+                    E11DP-S1 - Interior Architecture Tectonics, Tools and
+                    Technology
                   </option>
-                  <option value="#SPLUS3568A4">
-                    E1F5-FMR - BA Fashion Mkting &amp; Retailing - Year 4 -
-                    September Semester
+                  <option value="E11DY-S1">
+                    E11DY-S1 - Design Thinking and Innovation
                   </option>
-                  <option value="#SPLUS1AEAE7">
-                    F291-COS - BSc Computer Science - Year 1 - September
-                    Semester
+                  <option value="E11ST-S1">E11ST-S1 - Strategic Design</option>
+                  <option value="E11SU-S1">
+                    E11SU-S1 - Sustainable Design &amp; Management
                   </option>
-                  <option value="#SPLUS3FF4E6">
-                    F291-COS - BSc Computer Science - Year 2 - September
-                    Semester
+                  <option value="E16DS-S1">
+                    E16DS-S1 - Introduction to Design Studies
                   </option>
-                  <option value="#SPLUS723C7B">
-                    F291-COS - BSc Computer Science - Year 3 - September
-                    Semester
+                  <option value="E17DD-S1">
+                    E17DD-S1 - Rethinking Design 2: Develop and Deliver
                   </option>
-                  <option value="#SPLUSB2BD7F">
-                    F291-COS - BSc Computer Science - Year 4 - September
-                    Semester
+                  <option value="E17DI-S1">
+                    E17DI-S1 - Rethinking Design 1: Discover and Define
                   </option>
-                  <option value="#SPLUS3D91DD">
-                    F2B1-BIM - MSc in Bus Information Mgt - September Semester
+                  <option value="E18AD-S1">
+                    E18AD-S1 - CAD for Design 1 AutoCAD
                   </option>
-                  <option value="#SPLUS028161">
-                    F2CC-CSE - BSc Computer Systems - Year 1 - September
-                    Semester
+                  <option value="E18BB-S1">E18BB-S1 - Branding</option>
+                  <option value="E18CB-S1">
+                    E18CB-S1 - Consumer Behaviour
                   </option>
-                  <option value="#SPLUSB47EAF">
-                    F2CC-CSE - BSc Computer Systems - Year 2 - September
-                    Semester
+                  <option value="E18CI-S1">
+                    E18CI-S1 - Construction for Interior Architecture
                   </option>
-                  <option value="#SPLUS8D9825">
-                    F2CC-CSE - BSc Computer Systems - Year 3 - September
-                    Semester
+                  <option value="E18IC-S1">
+                    E18IC-S1 - Design Studio 1 Residential Design
                   </option>
-                  <option value="#SPLUS5A8F57">
-                    F2CC-CSE - BSc Computer Systems - Year 4 - September
-                    Semester
+                  <option value="E18IP-S1">
+                    E18IP-S1 - Intermediate Photography
                   </option>
-                  <option value="#SPLUS492C68">
-                    F2CG-ITB - MSc IT (Business) - September Semester
+                  <option value="E18TH-S1">
+                    E18TH-S1 - Creative Digital Technologies
                   </option>
-                  <option value="#SPLUS3FF4E9">
-                    F2D1-DSC - MSc Data Science - September Semester
+                  <option value="E19AS-S1">
+                    E19AS-S1 - Art Direction and Storytelling
                   </option>
-                  <option value="#SPLUS492C6A">
-                    F2EG-ITS - MSc IT (Software Systems) - September Semester
+                  <option value="E19BB-S1">E19BB-S1 - Design Branding</option>
+                  <option value="E19DS-S1">
+                    E19DS-S1 - CAD for Design 3 Revit
                   </option>
-                  <option value="#SPLUSD27410">
-                    F2N3-CNS - MSc Network Security - September Semester
+                  <option value="E19ET-S1">
+                    E19ET-S1 - Enterprise and Innovation for Creative Industries
                   </option>
-                  <option value="F2S7-1">
-                    F2S7-SOE - MSc Software Engineering - September Semester
+                  <option value="E19FW-S1">
+                    E19FW-S1 - Journalism content creation
                   </option>
-                  <option value="#SPLUS3D91D0">
-                    F2Z7-ARI - MSc in Artificial Intelligence - September
-                    Semester
+                  <option value="E19IE-S1">
+                    E19IE-S1 - Design Studio 3 Service Industry Design
                   </option>
-                  <option value="#SPLUSFEE497">
-                    F740-SDS - BSc Statistical Data Science - Year 1 - September
-                    Semester
+                  <option value="E19IM-S1">
+                    E19IM-S1 - Fashion Image Making
                   </option>
-                  <option value="#SPLUSE274B0">
-                    F740-SDS - BSc Statistical Data Science - Year 2 - September
-                    Semester
+                  <option value="E19TA-S1">
+                    E19TA-S1 - Future Textiles &amp; Apparel
                   </option>
-                  <option value="#SPLUSCD3414">
-                    F740-SDS - BSc Statistical Data Science - Year 3 - September
-                    Semester
+                  <option value="F10DA-S1">F10DA-S1 - Data Assimilation</option>
+                  <option value="F10MM-S1">F10MM-S1 - Optimisation</option>
+                  <option value="F17CA-S1">F17CA-S1 - Calculus A</option>
+                  <option value="F17LP-S1">F17LP-S1 - Logic and Proof</option>
+                  <option value="F17XA-S1">
+                    F17XA-S1 - Mathematics for Engineers and Scientists 1
                   </option>
-                  <option value="#SPLUS55E8DB">
-                    F740-SDS - BSc Statistical Data Science - Year 4 - September
-                    Semester
+                  <option value="F18CD-S1">
+                    F18CD-S1 - Multivariable Calculus and Real Analysis A
                   </option>
-                  <option value="#SPLUS93C0C1">
-                    F902-MDS - BSc Data Sciences - Year 1 - September Semester
+                  <option value="F18CF-S1">F18CF-S1 - Linear Algebra</option>
+                  <option value="F18XC-S1">
+                    F18XC-S1 - Mathematics for Engineers and Scientists 3
                   </option>
-                  <option value="#SPLUSE274B2">
-                    F902-MDS - BSc Data Sciences - Year 2 - September Semester
+                  <option value="F20BC-S1">
+                    F20BC-S1 - Biologically Inspired Computation
                   </option>
-                  <option value="#SPLUS55E9C2">
-                    F902-MDS - BSc Data Sciences - Year 3 - September Semester
+                  <option value="F20CN-S1">
+                    F20CN-S1 - Computer Network Security
                   </option>
-                  <option value="#SPLUSBE896D">
-                    G137-PEE - MSc Petroleum Engineering - September Semester
+                  <option value="F20DL-S1">
+                    F20DL-S1 - Data Mining and Machine Learning
                   </option>
-                  <option value="#SPLUSFEFF1E">
-                    MBA (EBS) September Semester
+                  <option value="F20DV-S1">
+                    F20DV-S1 - Data Visualisation and Analytics
+                  </option>
+                  <option value="F20GA-S1">
+                    F20GA-S1 - 3D Graphics and Animation
+                  </option>
+                  <option value="F20IF-S1">
+                    F20IF-S1 - Information Systems Methodologies
+                  </option>
+                  <option value="F20ML-S1">
+                    F20ML-S1 - Statistical Machine Learning
+                  </option>
+                  <option value="F20PA-S1">
+                    F20PA-S1 - Research Methods &amp; Requirements Engineering
+                  </option>
+                  <option value="F20RO-S1">
+                    F20RO-S1 - Intelligent Robotics
+                  </option>
+                  <option value="F20RS-S1">
+                    F20RS-S1 - Rigorous Methods for Software Engineering
+                  </option>
+                  <option value="F20SA-S1">
+                    F20SA-S1 - Statistical Modelling and Analysis
+                  </option>
+                  <option value="F20SC-S1">
+                    F20SC-S1 - Industrial Programming
+                  </option>
+                  <option value="F21BC-S1">
+                    F21BC-S1 - Biologically Inspired Computation
+                  </option>
+                  <option value="F21CN-S1">
+                    F21CN-S1 - Computer Network Security
+                  </option>
+                  <option value="F21DF-S1">
+                    F21DF-S1 - Databases and Information Systems
+                  </option>
+                  <option value="F21DL-S1">
+                    F21DL-S1 - Data Mining and Machine Learning
+                  </option>
+                  <option value="F21DV-S1">
+                    F21DV-S1 - Data Visualisation and Analytics
+                  </option>
+                  <option value="F21GA-S1">
+                    F21GA-S1 - 3D Graphics and Animation
+                  </option>
+                  <option value="F21IF-S1">
+                    F21IF-S1 - Information Systems Methodologies
+                  </option>
+                  <option value="F21MC-S1">
+                    F21MC-S1 - Mobile Communications &amp; Programming
+                  </option>
+                  <option value="F21RO-S1">
+                    F21RO-S1 - Intelligent Robotics
+                  </option>
+                  <option value="F21RS-S1">
+                    F21RS-S1 - Rigorous Methods for Software Engineering
+                  </option>
+                  <option value="F21SA-S1">
+                    F21SA-S1 - Statistical Modelling and Analysis
+                  </option>
+                  <option value="F21SC-S1">
+                    F21SC-S1 - Industrial Programming
+                  </option>
+                  <option value="F21SF-S1">
+                    F21SF-S1 - Software Engineering Foundations
+                  </option>
+                  <option value="F26EC-AY">
+                    F26EC-AY - Entry Computer Science
+                  </option>
+                  <option value="F27ID-S1">
+                    F27ID-S1 - Introduction to Interaction Design
+                  </option>
+                  <option value="F27PX-S1">F27PX-S1 - Praxis</option>
+                  <option value="F27SA-S1">
+                    F27SA-S1 - Software Development 1
+                  </option>
+                  <option value="F27SP-S1">
+                    F27SP-S1 - Introduction to Programming 1
+                  </option>
+                  <option value="F28ED-S1">
+                    F28ED-S1 - User-Centred Experimental Design
+                  </option>
+                  <option value="F28PL-S1">
+                    F28PL-S1 - Programming Languages
+                  </option>
+                  <option value="F28SG-S1">
+                    F28SG-S1 - Introduction to Data Structures &amp; Algorithms
+                  </option>
+                  <option value="F28SH-S1">
+                    F28SH-S1 - Programming for Data Analysis
+                  </option>
+                  <option value="F28WP-S1">F28WP-S1 - Web Programming</option>
+                  <option value="F29AI-S1">
+                    F29AI-S1 - Artificial Intelligence and Intelligent Agents
+                  </option>
+                  <option value="F29DC-S1">
+                    F29DC-S1 - Data Communications and Networking
+                  </option>
+                  <option value="F29FA-S1">F29FA-S1 - Foundations 1</option>
+                  <option value="F29KM-S1">
+                    F29KM-S1 - Knowledge Management
+                  </option>
+                  <option value="F29SO-S1">
+                    F29SO-S1 - Software Engineering
+                  </option>
+                  <option value="F70DA-S1">
+                    F70DA-S1 - Statistics Dissertation A
+                  </option>
+                  <option value="F70SC-S1">
+                    F70SC-S1 - Statistical Computing
+                  </option>
+                  <option value="F77SA-S1">
+                    F77SA-S1 - Topics in Statistical Practice
+                  </option>
+                  <option value="F78AA-S1">
+                    F78AA-S1 - Actuarial and Financial Mathematics A
+                  </option>
+                  <option value="F78AP-S1">
+                    F78AP-S1 - Algorithmic and Scientific Programming
+                  </option>
+                  <option value="F78PA-S1">
+                    F78PA-S1 - Probability and Statistics A
+                  </option>
+                  <option value="F78QT-S1">
+                    F78QT-S1 - Quantitative Methods 1
+                  </option>
+                  <option value="F79PS-S1">
+                    F79PS-S1 - Further Statistical Methods
+                  </option>
+                  <option value="G10UG-S1">
+                    G10UG-S1 - Introduction to Petroleum Engineering
+                  </option>
+                  <option value="G11DE-S1">
+                    G11DE-S1 - Drilling Engineering
+                  </option>
+                  <option value="G11FE-S1">
+                    G11FE-S1 - Formation Evaluation
+                  </option>
+                  <option value="G11PG-S1">
+                    G11PG-S1 - Geoscience for Petroleum Engineering
+                  </option>
+                  <option value="G11RE-S1">
+                    G11RE-S1 - Reservoir Engineering
+                  </option>
+                  <option value="H11EB-AY">
+                    H11EB-AY - Economics for Business
+                  </option>
+                  <option value="H11EN-S1">
+                    H11EN-S1 - Entrepreneurship &amp; Creativity
+                  </option>
+                  <option value="H11FM-AY">
+                    H11FM-AY - Financial Decision Making
+                  </option>
+                  <option value="H11PW-AY">
+                    H11PW-AY - People, Work and Organisations
                   </option>
                 </select>
               </td>
