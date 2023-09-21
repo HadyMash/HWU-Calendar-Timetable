@@ -1,0 +1,31 @@
+.home {
+    display: flex;
+    flex-direction: column;
+    align-content: center;
+    justify-content: center;
+    text-align: center;
+}
+
+.home .welcome-text {
+    margin-bottom: 20px;
+    height: 100%;
+}
+
+form {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    /*justify-content: center;*/
+}
+
+table {
+    border-spacing: 15px;
+}
+
+table td {
+    text-align: start;
+}
+
+table select {
+    width: 100%;
+}
