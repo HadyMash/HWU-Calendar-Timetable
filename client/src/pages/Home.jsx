@@ -13,20 +13,13 @@ export function Home() {
     // make call to rest api
   };
 
-  const generateWeekOptions = (selectFirst = true) => {
+  const generateWeekOptions = () => {
     const options = new Array(12);
 
-    options[selectFirst ? 0 : 11] = (
-      <option value={`Week ${selectFirst ? 1 : 12}`} selected={true}>{`Week ${
-        selectFirst ? 1 : 12
-      }`}</option>
-    );
-
-    const starting = selectFirst ? 2 : 1;
-    const ending = selectFirst ? 12 : 11;
-
-    for (let i = starting; i <= ending; i++) {
-      options[i - 1] = <option value={`Week ${i}`}>{`Week ${i}`}</option>;
+    for (let i = 1; i <= 12; i++) {
+      options[i - 1] = (
+        <option key={i} value={`Week ${i}`}>{`Week ${i}`}</option>
+      );
     }
 
     return options;
@@ -799,9 +792,7 @@ export function Home() {
               </td>
               <td>
                 <select id={'semester'} name="semester">
-                  <option selected="selected" value="September Semester">
-                    September Semester
-                  </option>
+                  <option value="September Semester">September Semester</option>
                   <option value="January Semester">January Semester</option>
                   {/* TODO: add support for may and may dep semesters */}
                   {/*<option value="36;37;38;39;40;41;42;43;44;45;46;47">*/}
@@ -818,7 +809,11 @@ export function Home() {
                 <label htmlFor={'start-week'}>From week:</label>
               </td>
               <td>
-                <select id={'start-week'} name={'start-week'}>
+                <select
+                  id={'start-week'}
+                  name={'start-week'}
+                  defaultValue={'Week 1'}
+                >
                   {generateWeekOptions()}
                 </select>
               </td>
@@ -828,12 +823,18 @@ export function Home() {
                 <label htmlFor={'end-week'}>To week:</label>
               </td>
               <td>
-                <select id={'end-week'}>{generateWeekOptions(false)}</select>
+                <select
+                  id={'end-week'}
+                  name={'end-week'}
+                  defaultValue={'Week 12'}
+                >
+                  {generateWeekOptions(false)}
+                </select>
               </td>
             </tr>
             <tr>
               <td>
-                <label htmlFor={'alert'}>Default alert</label>
+                <label htmlFor={'alert'}>Default alert:</label>
               </td>
               <td>
                 <select id={'alert'} name="alert">
