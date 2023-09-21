@@ -1,6 +1,7 @@
+import { useRef, useState } from 'react';
+import axios from 'axios';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-import { useRef } from 'react';
 
 export function Home() {
   /* Things to implement
@@ -15,8 +16,11 @@ export function Home() {
   const endWeekRef = useRef(null);
   const alertRef = useRef(null);
 
-  const handleSubmit = (e) => {
+  const [loadingSubmit, setLoadingSubmit] = useState(false);
+
+  const handleSubmit = async (e) => {
     e.preventDefault();
+    if (loadingSubmit) return;
 
     const showErrorMessage = (message) => {
       toast.error(message, {
@@ -61,7 +65,27 @@ export function Home() {
 
     if (!valid) return;
 
-    // TODO: make call to rest api
+    // make call to rest api
+    setLoadingSubmit(true);
+    try {
+      // TODO: serialize in a better way to avoid comma in course name
+      const serializedCourses = courses.join(',');
+      const response = await axios.get('http://localhost:3000/timetable', {
+        params: {
+          courses: serializedCourses,
+          semester,
+          startWeek,
+          endWeek,
+          alert,
+        },
+      });
+      console.log(response);
+    } catch (error) {
+      console.error(error);
+      showErrorMessage('Something went wrong, check console for log');
+    } finally {
+      setLoadingSubmit(false);
+    }
   };
   const generateWeekOptions = () => {
     const options = new Array(12);
@@ -958,7 +982,9 @@ export function Home() {
             </tr>
           </tbody>
         </table>
-        <button type="submit">Submit</button>
+        <button type="submit" disabled={loadingSubmit}>
+          Submit
+        </button>
       </form>
       <ToastContainer />
     </div>
