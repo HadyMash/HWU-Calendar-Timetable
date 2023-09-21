@@ -6,13 +6,22 @@ export function Home() {
    * 4. alerts before event
    */
 
+  const handleSubmit = (e) => {
+    // ! temp
+    console.log(e);
+    // TODO: validate
+    // make call to rest api
+  };
+
   return (
     <div className={'home'}>
       <div className={'welcome-text'}>
         <h1>Welcome to Heriot-Watt University Calendar Timetable</h1>
-        <p>Enter your courses to add them to your calendar as events</p>
+        <p>
+          Select your program to add your courses to your calendar as events
+        </p>
       </div>
-      <form>
+      <form onSubmit={handleSubmit}>
         <table>
           <tbody>
             <tr>
