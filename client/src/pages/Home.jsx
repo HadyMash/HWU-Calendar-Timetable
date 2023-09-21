@@ -13,6 +13,25 @@ export function Home() {
     // make call to rest api
   };
 
+  const generateWeekOptions = (selectFirst = true) => {
+    const options = new Array(12);
+
+    options[selectFirst ? 0 : 11] = (
+      <option value={`Week ${selectFirst ? 1 : 12}`} selected={true}>{`Week ${
+        selectFirst ? 1 : 12
+      }`}</option>
+    );
+
+    const starting = selectFirst ? 2 : 1;
+    const ending = selectFirst ? 12 : 11;
+
+    for (let i = starting; i <= ending; i++) {
+      options[i - 1] = <option value={`Week ${i}`}>{`Week ${i}`}</option>;
+    }
+
+    return options;
+  };
+
   return (
     <div className={'home'}>
       <div className={'welcome-text'}>
@@ -799,7 +818,9 @@ export function Home() {
                 <label htmlFor={'start-week'}>From week:</label>
               </td>
               <td>
-                <select id={'start-week'} name={'start-week'}></select>
+                <select id={'start-week'} name={'start-week'}>
+                  {generateWeekOptions()}
+                </select>
               </td>
             </tr>
             <tr>
@@ -807,7 +828,7 @@ export function Home() {
                 <label htmlFor={'end-week'}>To week:</label>
               </td>
               <td>
-                <select id={'start-week'}></select>
+                <select id={'end-week'}>{generateWeekOptions(false)}</select>
               </td>
             </tr>
             <tr>
@@ -815,7 +836,10 @@ export function Home() {
                 <label htmlFor={'alert'}>Default alert</label>
               </td>
               <td>
-                <select id={'alert'} name="alert"></select>
+                <select id={'alert'} name="alert">
+                  {/* TODO: add more options */}
+                  <option value="0">None</option>
+                </select>
               </td>
             </tr>
           </tbody>
