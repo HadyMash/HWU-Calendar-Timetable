@@ -11,7 +11,8 @@ const days = [
   'Sunday',
 ];
 
-const browser = await puppeteer.launch({ headless: 'new' });
+// const browser = await puppeteer.launch({ headless: 'new' });
+const browser = await puppeteer.launch({ headless: false });
 
 // ! temp
 // const courses = [
@@ -231,6 +232,24 @@ export async function getTimetable(courses, semester) {
     await page.click(viewTimetableSelector, {
       waitUntil: 'domcontentloaded',
     });
+  }
+
+  // TODO: check if valid selections were made
+  {
+    const errorTitleSelector = 'span#errTitle';
+    const errorLabelSelector = 'span#errLabel';
+
+    const errorTitle = await page.$(errorTitleSelector);
+    const errorLabel = await page.$(errorLabelSelector);
+
+    if (errorTitle || errorLabel) {
+      // read error from error label
+      const error = await errorLabel.evaluate((element) =>
+        element.textContent.trim(),
+      );
+
+      throw new Error(`Error: ${error}`);
+    }
   }
 
   // TODO: read timetable from html

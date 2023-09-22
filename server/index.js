@@ -1,5 +1,6 @@
 import express from 'express';
 import cors from 'cors';
+import { getTimetable } from './pptr.js';
 
 const app = express();
 const port = 3000;
@@ -7,7 +8,7 @@ const port = 3000;
 app.use(express.json());
 app.use(cors());
 
-app.post('/timetable', (req, res) => {
+app.post('/timetable', async (req, res) => {
   try {
     const semester = req.body.semester;
     if (!semester) {
@@ -32,13 +33,10 @@ app.post('/timetable', (req, res) => {
       return;
     }
 
-    res.send({
-      courses,
-      semester,
-      startWeek,
-      endWeek,
-      alert,
-    });
+    console.log(`Received request for ${courses.length} courses`);
+
+    const timetable = await getTimetable(courses, semester);
+    res.send(timetable);
   } catch (e) {
     console.log(e);
     // TODO: save error to log file
