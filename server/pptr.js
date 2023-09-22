@@ -11,8 +11,8 @@ const days = [
   'Sunday',
 ];
 
-// const browser = await puppeteer.launch({ headless: 'new' });
-const browser = await puppeteer.launch({ headless: false });
+const browser = await puppeteer.launch({ headless: 'new' });
+// const browser = await puppeteer.launch({ headless: false });
 
 // ! temp
 // const courses = [
