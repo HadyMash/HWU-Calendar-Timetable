@@ -131,6 +131,12 @@ export async function getTimetable(courses, semester) {
           (element) => element.textContent.trim().split('-')[0],
         );
 
+        const staffSelector = columnSelector(8);
+        await page.waitForSelector(staffSelector);
+        const staff = await page.$eval(staffSelector, (element) =>
+          element.textContent.trim(),
+        );
+
         // delete row
         await deleteElement(page, 'tr');
 
@@ -140,6 +146,7 @@ export async function getTimetable(courses, semester) {
           endTime,
           weeks,
           room,
+          staff,
         };
       }
 
