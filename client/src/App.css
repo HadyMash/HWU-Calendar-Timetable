@@ -33,18 +33,23 @@ table td:has(div) {
 
 form button {
     margin-top: 20px;
-    height: 40px;
+    height: 42px;
     border-radius: 5px;
     border: none;
     background-color: #4CAF50;
     color: white;
     font-size: 16px;
     font-weight: 600;
-    padding: 0 20px;
+    width: 200px;
     cursor: pointer;
     transition: background-color 0.2s ease;
 }
 
 form button:hover {
     background-color: #45a049;
+}
+
+form button:disabled {
+    background-color: #8bc58e;
+    cursor: not-allowed;
 }

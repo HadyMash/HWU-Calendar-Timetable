@@ -1,6 +1,7 @@
 import { useRef, useState } from 'react';
 import axios from 'axios';
 import Select from 'react-select';
+import PropagateLoader from 'react-spinners/PropagateLoader';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { courses, semesters } from '../data.js';
@@ -37,11 +38,14 @@ export function Home() {
       });
     };
 
-    const courses = coursesRef.current.state.selectValue;
-    const semester = semesterRef.current.state.selectValue[0];
-    const startWeek = startWeekRef.current.state.selectValue[0];
-    const endWeek = endWeekRef.current.state.selectValue[0];
-    const alert = alertRef.current.state.selectValue[0];
+    const getSelectedValues = (ref) =>
+      ref.current.state.selectValue.map((obj) => obj.value);
+
+    const courses = getSelectedValues(coursesRef);
+    const semester = getSelectedValues(semesterRef)[0];
+    const startWeek = getSelectedValues(startWeekRef)[0];
+    const endWeek = getSelectedValues(endWeekRef)[0];
+    const alert = getSelectedValues(alertRef)[0];
 
     // validate
     let valid = true;
@@ -76,9 +80,18 @@ export function Home() {
         alert,
       });
       console.log(response);
+      // TODO: route to download page
+
+      // TODO: check for identical sessions clashing
+
+      // TODO: create ical file and download
     } catch (error) {
       console.error(error);
-      showErrorMessage('Something went wrong, check console for log');
+      showErrorMessage(
+        `Something went wrong (status code ${
+          error?.response?.status ?? 'unknown'
+        }). Check console for log`,
+      );
     } finally {
       setLoadingSubmit(false);
     }
@@ -109,6 +122,7 @@ export function Home() {
               </td>
               <td>
                 {/* TODO: get list of courses from server and store for a short while*/}
+                {/* TODO: add animation to multi select*/}
                 <Select
                   id={'courses'}
                   options={courses}
@@ -185,8 +199,13 @@ export function Home() {
             </tr>
           </tbody>
         </table>
+        {/* TODO: add alias feature */}
         <button type="submit" disabled={loadingSubmit}>
-          Submit
+          {loadingSubmit ? (
+            <PropagateLoader color={'white'} loading={true} size={5} />
+          ) : (
+            'Get Timetable'
+          )}
         </button>
       </form>
       <ToastContainer />

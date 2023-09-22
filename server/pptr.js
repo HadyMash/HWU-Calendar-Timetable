@@ -72,7 +72,7 @@ export async function getTimetable(courses, semester) {
     await page.waitForSelector(headerSelector);
     await deleteElement(page, headerSelector);
 
-    // TODO: read each day
+    // read each day
     for (const day of days) {
       // delete day name
       await page.waitForSelector('p');
@@ -174,8 +174,6 @@ export async function getTimetable(courses, semester) {
       await deleteElement(page, tableSelector);
     }
 
-    // TODO: check for identical sessions clashing
-
     // delete footer
     await page.waitForSelector('table.footer-border-args');
     await deleteElement(page, 'table.footer-border-args');
@@ -246,7 +244,7 @@ export async function getTimetable(courses, semester) {
       });
     }
 
-    // TODO: check if valid selections were made
+    // check if valid selections were made
     {
       const errorTitleSelector = 'span#errTitle';
       const errorLabelSelector = 'span#errLabel';
@@ -266,7 +264,7 @@ export async function getTimetable(courses, semester) {
       }
     }
 
-    // TODO: read timetable from html
+    // read timetable from html
     for (let i = 0; i < courses.length; i++) {
       await readCourse(page);
     }
