@@ -11,8 +11,8 @@ const days = [
   'Sunday',
 ];
 
-const browser = await puppeteer.launch({ headless: 'new' });
-// const browser = await puppeteer.launch({ headless: false });
+// const browser = await puppeteer.launch({ headless: 'new' });
+const browser = await puppeteer.launch({ headless: false });
 
 // ! temp
 // const courses = [
@@ -182,81 +182,85 @@ export async function getTimetable(courses, semester) {
   }
 
   const page = await browser.newPage();
+  try {
+    await page.setViewport({ width: 1920, height: 1080 });
+    // Navigate to login
+    await page.goto(
+      'https://timetable.hw.ac.uk/WebTimetables/LiveDU/login.aspx',
+    );
 
-  await page.setViewport({ width: 1920, height: 1080 });
-  // Navigate to login
-  await page.goto('https://timetable.hw.ac.uk/WebTimetables/LiveDU/login.aspx');
-
-  // login as guest
-  {
-    const guestButtonSelector = '#bGuestLogin';
-    await page.waitForSelector(guestButtonSelector);
-    await page.click(guestButtonSelector);
-  }
-
-  // go to courses
-  {
-    const coursesSelector = '#LinkBtn_modules';
-    await page.waitForSelector(coursesSelector);
-    await page.click(coursesSelector);
-  }
-
-  async function select(selector, values) {
-    await page.waitForSelector(selector);
-    const select = await page.$(selector);
-    await select.select(...values);
-  }
-
-  // select courses
-  await select('select#dlObject', courses);
-
-  // select semester
-  await select('select#lbWeeks', [semester]);
-
-  // select all days
-  const allDays = '1-7';
-  await select('select#lbDays', [allDays]);
-
-  // select DayEvening
-  const dayEvening = '1-56';
-  await select('select#dlPeriod', [dayEvening]);
-
-  // select list view
-  const listView = 'TextSpreadsheet;swsurl;SWSCUST Module TextSpreadsheet';
-  await select('select#dlType', [listView]);
-
-  // click view timetable
-  {
-    const viewTimetableSelector = '#bGetTimetable';
-    await page.waitForSelector(viewTimetableSelector);
-    await page.click(viewTimetableSelector, {
-      waitUntil: 'domcontentloaded',
-    });
-  }
-
-  // TODO: check if valid selections were made
-  {
-    const errorTitleSelector = 'span#errTitle';
-    const errorLabelSelector = 'span#errLabel';
-
-    const errorTitle = await page.$(errorTitleSelector);
-    const errorLabel = await page.$(errorLabelSelector);
-
-    if (errorTitle || errorLabel) {
-      // read error from error label
-      const error = await errorLabel.evaluate((element) =>
-        element.textContent.trim(),
-      );
-
-      throw new Error(`Error: ${error}`);
+    // login as guest
+    {
+      const guestButtonSelector = '#bGuestLogin';
+      await page.waitForSelector(guestButtonSelector);
+      await page.click(guestButtonSelector);
     }
-  }
 
-  // TODO: read timetable from html
-  for (let i = 0; i < courses.length; i++) {
-    await readCourse(page);
-  }
+    // go to courses
+    {
+      const coursesSelector = '#LinkBtn_modules';
+      await page.waitForSelector(coursesSelector);
+      await page.click(coursesSelector);
+    }
 
-  await page.close();
-  return data;
+    async function select(selector, values) {
+      await page.waitForSelector(selector);
+      const select = await page.$(selector);
+      await select.select(...values);
+    }
+
+    // select courses
+    await select('select#dlObject', courses);
+
+    // select semester
+    await select('select#lbWeeks', [semester]);
+
+    // select all days
+    const allDays = '1-7';
+    await select('select#lbDays', [allDays]);
+
+    // select DayEvening
+    const dayEvening = '1-56';
+    await select('select#dlPeriod', [dayEvening]);
+
+    // select list view
+    const listView = 'TextSpreadsheet;swsurl;SWSCUST Module TextSpreadsheet';
+    await select('select#dlType', [listView]);
+
+    // click view timetable
+    {
+      const viewTimetableSelector = '#bGetTimetable';
+      await page.waitForSelector(viewTimetableSelector);
+      await page.click(viewTimetableSelector, {
+        waitUntil: 'domcontentloaded',
+      });
+    }
+
+    // TODO: check if valid selections were made
+    {
+      const errorTitleSelector = 'span#errTitle';
+      const errorLabelSelector = 'span#errLabel';
+
+      const errorTitle = await page.$(errorTitleSelector);
+      const errorLabel = await page.$(errorLabelSelector);
+
+      if (errorTitle || errorLabel) {
+        // read error from error label
+        const error = await errorLabel.evaluate((element) =>
+          element.textContent.trim(),
+        );
+
+        throw new Error(`Error: ${error}`);
+      }
+    }
+
+    // TODO: read timetable from html
+    for (let i = 0; i < courses.length; i++) {
+      await readCourse(page);
+    }
+
+    return data;
+  } finally {
+    await page.close();
+  }
 }

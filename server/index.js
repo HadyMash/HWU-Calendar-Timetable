@@ -35,6 +35,8 @@ app.post('/timetable', async (req, res) => {
 
     console.log(`Received request for ${courses.length} courses`);
 
+    console.log(courses, semester);
+
     const timetable = await getTimetable(courses, semester);
     res.send(timetable);
   } catch (e) {
