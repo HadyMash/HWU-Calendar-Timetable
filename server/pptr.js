@@ -68,11 +68,14 @@ export async function getTimetable(courses, semester) {
     });
 
     // delete header
-    await deleteElement(page, 'table.header-border-args');
+    const headerSelector = 'table.header-border-args';
+    await page.waitForSelector(headerSelector);
+    await deleteElement(page, headerSelector);
 
     // TODO: read each day
     for (const day of days) {
       // delete day name
+      await page.waitForSelector('p');
       await deleteElement(page, 'p');
 
       // check if day is empty
@@ -80,9 +83,11 @@ export async function getTimetable(courses, semester) {
       await page.waitForSelector(tableSelector);
       const table = await page.$(tableSelector);
       {
+        await page.waitForSelector('tbody');
         const tableBody = await table.$('tbody');
 
         if (!tableBody) {
+          await page.waitForSelector(tableSelector);
           await deleteElement(page, tableSelector);
           continue;
         }
@@ -90,6 +95,7 @@ export async function getTimetable(courses, semester) {
 
       // delete column titles
       const titlesSelector = 'tr.columnTitles';
+      await page.waitForSelector(titlesSelector);
       await deleteElement(page, titlesSelector);
 
       // read each row
@@ -139,6 +145,7 @@ export async function getTimetable(courses, semester) {
         );
 
         // delete row
+        await page.waitForSelector('tr');
         await deleteElement(page, 'tr');
 
         return {
@@ -158,16 +165,19 @@ export async function getTimetable(courses, semester) {
         if (!data[courseTitle][day]) data[courseTitle][day] = [];
         data[courseTitle][day].push(session);
 
+        await page.waitForSelector('tr');
         const nextRow = await table.$('tr');
         if (!nextRow) break;
       }
 
+      await page.waitForSelector(tableSelector);
       await deleteElement(page, tableSelector);
     }
 
     // TODO: check for identical sessions clashing
 
     // delete footer
+    await page.waitForSelector('table.footer-border-args');
     await deleteElement(page, 'table.footer-border-args');
   }
 
@@ -240,6 +250,8 @@ export async function getTimetable(courses, semester) {
     {
       const errorTitleSelector = 'span#errTitle';
       const errorLabelSelector = 'span#errLabel';
+
+      await page.waitForSelector('body');
 
       const errorTitle = await page.$(errorTitleSelector);
       const errorLabel = await page.$(errorLabelSelector);
