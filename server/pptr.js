@@ -1,4 +1,5 @@
 import puppeteer from 'puppeteer';
+// import util from 'util';
 
 const days = [
   'Monday',
@@ -10,22 +11,29 @@ const days = [
   'Sunday',
 ];
 
-const browser = await puppeteer.launch({ headless: false });
+const browser = await puppeteer.launch({ headless: 'new' });
 
 // ! temp
-const courses = [
-  'B17CA-S1',
-  'B18AP-S1',
-  'B27MW-S1',
-  'B30EI-S1',
-  'B30UB-S1',
-  'F28ED-S1',
-];
+// const courses = [
+//   'B17CA-S1',
+//   'B18AP-S1',
+//   'B27MW-S1',
+//   'B30EI-S1',
+//   'B30UB-S1',
+//   'F28ED-S1',
+// ];
 // const courses = ['B17CA-S1', 'B18AP-S1'];
 // const courses = ['F28ED-S1'];
-const semester = '2;3;4;5;6;7;8;9;10;11;12;13';
+// const semester = '2;3;4;5;6;7;8;9;10;11;12;13';
 
-await getTimetable(courses, semester);
+// console.log(
+//   util.inspect(
+//     await getTimetable(courses, semester),
+//     false,
+//     null,
+//     true /* enable colors */,
+//   ),
+// );
 
 /**
  * Get the timetable for a list of courses in a semester
@@ -34,6 +42,8 @@ await getTimetable(courses, semester);
  * @returns {Promise<void>}
  */
 export async function getTimetable(courses, semester) {
+  const data = {};
+
   /**
    * Read a course from the page and append it to the timetable
    * @param page
@@ -43,10 +53,9 @@ export async function getTimetable(courses, semester) {
     // get course title
     const titleSelector = 'span.header-0-0-3';
     await page.waitForSelector(titleSelector);
-    const title = await page.$eval(titleSelector, (element) =>
-      element.textContent.trim(),
+    const courseTitle = await page.$eval(titleSelector, (element) =>
+      element.textContent.trim().replace('  ', ' '),
     );
-    console.log('title:', title);
 
     // get semester start and end dates
     const datesSelector = 'span.header-1-2-3';
@@ -56,16 +65,12 @@ export async function getTimetable(courses, semester) {
       const [start, end] = text.split('-');
       return { start, end };
     });
-    console.log('dates:', dates);
 
     // delete header
     await deleteElement(page, 'table.header-border-args');
 
     // TODO: read each day
     for (const day of days) {
-      // ! temp
-      console.log('day:', day);
-
       // delete day name
       await deleteElement(page, 'p');
 
@@ -77,11 +82,9 @@ export async function getTimetable(courses, semester) {
         const tableBody = await table.$('tbody');
 
         if (!tableBody) {
-          console.log('table is empty');
           await deleteElement(page, tableSelector);
           continue;
         }
-        console.log('table is not empty');
       }
 
       // delete column titles
@@ -142,7 +145,10 @@ export async function getTimetable(courses, semester) {
 
       while (true) {
         const session = await readRow();
-        console.log(session);
+
+        if (!data[courseTitle]) data[courseTitle] = {};
+        if (!data[courseTitle][day]) data[courseTitle][day] = [];
+        data[courseTitle][day].push(session);
 
         const nextRow = await table.$('tr');
         if (!nextRow) break;
@@ -226,4 +232,5 @@ export async function getTimetable(courses, semester) {
   }
 
   await page.close();
+  return data;
 }
