@@ -1,4 +1,4 @@
-import puppeteer, { TimeoutError } from 'puppeteer';
+import puppeteer from 'puppeteer';
 
 const days = [
   'Monday',
@@ -13,9 +13,16 @@ const days = [
 const browser = await puppeteer.launch({ headless: false });
 
 // ! temp
-// const courses = ['B17CA-S1', 'B18AP-S1', 'B27MW-S1', 'B30EI-S1', 'B30UB-S1'];
+const courses = [
+  'B17CA-S1',
+  'B18AP-S1',
+  'B27MW-S1',
+  'B30EI-S1',
+  'B30UB-S1',
+  'F28ED-S1',
+];
 // const courses = ['B17CA-S1', 'B18AP-S1'];
-const courses = ['F28ED-S1'];
+// const courses = ['F28ED-S1'];
 const semester = '2;3;4;5;6;7;8;9;10;11;12;13';
 
 await getTimetable(courses, semester);
@@ -81,9 +88,11 @@ export async function getTimetable(courses, semester) {
   }
 
   // TODO: read timetable from html
-  await readCourse(page);
+  for (let i = 0; i < courses.length; i++) {
+    await readCourse(page);
+  }
 
-  // await page.close();
+  await page.close();
 }
 
 /**
@@ -116,7 +125,6 @@ async function readCourse(page) {
   // TODO: read each day
   for (const day of days) {
     // ! temp
-    await page.waitForTimeout(2000);
     console.log('day:', day);
 
     // delete day name
@@ -143,8 +151,6 @@ async function readCourse(page) {
 
     // read each row
     async function readRow() {
-      await page.waitForTimeout(2000);
-
       const columnSelector = (n) => `tr > td:nth-child(${n})`;
 
       // get type
@@ -196,7 +202,6 @@ async function readCourse(page) {
     }
 
     while (true) {
-      await page.waitForTimeout(1000);
       const session = await readRow();
       console.log(session);
 
