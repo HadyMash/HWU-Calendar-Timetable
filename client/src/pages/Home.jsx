@@ -108,8 +108,8 @@ export function Home() {
   };
 
   return (
-    <div className={'home'}>
-      <div className={'welcome-text'}>
+    <div className={'center'}>
+      <div className={'top-text'}>
         <h1>Welcome to Heriot-Watt University Calendar Timetable</h1>
         <p>Please select your courses to add them to your calendar as events</p>
       </div>

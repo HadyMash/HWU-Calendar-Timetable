@@ -1,14 +1,14 @@
-.home {
+.center {
     display: flex;
     flex-direction: column;
-    align-content: center;
+    align-content: end;
+    align-items: center;
     justify-content: center;
     text-align: center;
 }
 
-.home .welcome-text {
+.top-text {
     margin-bottom: 20px;
-    height: 100%;
 }
 
 form {
@@ -31,7 +31,7 @@ table td:has(div) {
     max-width: 750px;
 }
 
-form button {
+button {
     margin-top: 20px;
     height: 42px;
     border-radius: 5px;
@@ -45,11 +45,44 @@ form button {
     transition: background-color 0.2s ease;
 }
 
-form button:hover {
+button:hover {
     background-color: #45a049;
 }
 
-form button:disabled {
+button:disabled {
     background-color: #8bc58e;
     cursor: not-allowed;
+}
+
+.download {
+    padding: 0 3.5%;
+}
+
+.download .center h1 {
+    margin-bottom: 10px;
+}
+
+.alias-table {
+    display: grid;
+    width: 100%;
+    grid-template-columns: 30% 1fr;
+    grid-row-gap: 12px;
+    grid-column-gap: 10px
+}
+
+.alias-table label {
+    box-sizing: border-box;
+    width: 100%;
+    text-overflow: ellipsis;
+    overflow: hidden;
+    white-space: nowrap;
+}
+
+.alias-table input {
+    font-size: 16px;
+    box-sizing: border-box;
+    width: 100%;
+    padding: 5px 12px;
+    border-radius: 6px;
+    border: 1px solid grey;
 }
