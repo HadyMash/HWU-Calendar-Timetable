@@ -33,10 +33,6 @@ app.post('/timetable', async (req, res) => {
       return;
     }
 
-    console.log(`Received request for ${courses.length} courses`);
-
-    console.log(courses, semester);
-
     const timetable = await getTimetable(courses, semester);
     res.send(timetable);
   } catch (e) {
@@ -45,6 +41,17 @@ app.post('/timetable', async (req, res) => {
     res.status(500).send('Internal server error');
   }
 });
+
+app.post('/generate-ics', async (req, res) => {
+  try {
+  } catch (e) {
+    console.error(e);
+    // TODO: save error to log file
+    res.status(500).send('Internal server error');
+  }
+});
+
+// TODO: make requests which return the available courses for a given semester
 
 app.listen(port, () => {
   console.log(`Server listening on port ${port}`);

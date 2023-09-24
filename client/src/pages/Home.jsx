@@ -5,6 +5,7 @@ import PropagateLoader from 'react-spinners/PropagateLoader';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { courses, semesters } from '../data.js';
+import { useNavigate } from 'react-router-dom';
 
 export function Home() {
   /* Things to implement
@@ -13,6 +14,7 @@ export function Home() {
    * 3. detect overlaps for multiple classrooms for the same subject
    * 4. alerts before event
    */
+  const navigate = useNavigate();
   const coursesRef = useRef(null);
   const semesterRef = useRef(null);
   const startWeekRef = useRef(null);
@@ -81,10 +83,14 @@ export function Home() {
       });
       console.log(response);
       // TODO: route to download page
-
-      // TODO: check for identical sessions clashing
-
-      // TODO: create ical file and download
+      navigate('/download', {
+        state: {
+          response,
+          startWeek,
+          endWeek,
+          alert,
+        },
+      });
     } catch (error) {
       console.error(error);
       showErrorMessage(
@@ -114,6 +120,7 @@ export function Home() {
         <p>Please select your courses to add them to your calendar as events</p>
       </div>
       <form onSubmit={handleSubmit}>
+        {/*TODO: fix table no longer taking up full width*/}
         <table>
           <tbody>
             <tr>

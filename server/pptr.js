@@ -161,13 +161,17 @@ export async function getTimetable(courses, semester) {
       while (true) {
         const session = await readRow();
 
-        if (!data[courseTitle]) data[courseTitle] = {};
-        if (!data[courseTitle][day]) data[courseTitle][day] = [];
-        data[courseTitle][day].push(session);
+        if (!data[courseTitle]) data[courseTitle] = { days: {} };
+        if (!data[courseTitle].days[day]) data[courseTitle].days[day] = [];
+        data[courseTitle].days[day].push(session);
 
         await page.waitForSelector('tr');
         const nextRow = await table.$('tr');
         if (!nextRow) break;
+      }
+
+      if (data[courseTitle]) {
+        data[courseTitle].dates = dates;
       }
 
       await page.waitForSelector(tableSelector);
