@@ -120,7 +120,6 @@ export function Home() {
         <p>Please select your courses to add them to your calendar as events</p>
       </div>
       <form onSubmit={handleSubmit}>
-        {/*TODO: fix table no longer taking up full width*/}
         <table>
           <tbody>
             <tr>
