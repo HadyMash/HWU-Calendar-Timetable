@@ -15,17 +15,6 @@ app.post('/timetable', async (req, res) => {
       res.status(400).send('Semester is required');
       return;
     }
-    const startWeek = req.body.startWeek;
-    if (!startWeek) {
-      res.status(400).send('Week from is required');
-      return;
-    }
-    const endWeek = req.body.endWeek;
-    if (!endWeek) {
-      res.status(400).send('Week to is required');
-      return;
-    }
-    const alert = req.body.alert ?? 0;
 
     const courses = req.body.courses;
     if (!courses) {
@@ -44,6 +33,27 @@ app.post('/timetable', async (req, res) => {
 
 app.post('/generate-ics', async (req, res) => {
   try {
+    const timetable = req.body.timetable;
+    if (!timetable) {
+      res.status(400).send('Timetable is required');
+      return;
+    }
+    const aliasMap = req.body.aliasMap;
+    const startWeek = req.body.startWeek ?? 1;
+    const endWeek = req.body.endWeek ?? 12;
+    if (startWeek > endWeek) {
+      res.status(400).send('Start week is after end week');
+      return;
+    }
+    const alert = req.body.alert ?? 0;
+
+    const ics = await generateICS(
+      timetable,
+      aliasMap,
+      startWeek,
+      endWeek,
+      alert,
+    );
   } catch (e) {
     console.error(e);
     // TODO: save error to log file

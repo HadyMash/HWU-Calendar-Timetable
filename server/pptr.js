@@ -62,7 +62,7 @@ export async function getTimetable(courses, semester) {
     const datesSelector = 'span.header-1-2-3';
     await page.waitForSelector(datesSelector);
     const dates = await page.$eval(datesSelector, (element) => {
-      const text = element.textContent.trim();
+      const text = element.textContent.trim().replace('  ', ' ');
       const [start, end] = text.split('-');
       return { start, end };
     });
@@ -106,28 +106,28 @@ export async function getTimetable(courses, semester) {
         const typeSelector = columnSelector(3);
         await page.waitForSelector(typeSelector);
         const type = await page.$eval(typeSelector, (element) =>
-          element.textContent.trim(),
+          element.textContent.trim().replace('  ', ' '),
         );
 
         // get start time
         const startTimeSelector = columnSelector(4);
         await page.waitForSelector(startTimeSelector);
         const startTime = await page.$eval(startTimeSelector, (element) =>
-          element.textContent.trim(),
+          element.textContent.trim().replace('  ', ' '),
         );
 
         // get end time
         const endTimeSelector = columnSelector(5);
         await page.waitForSelector(endTimeSelector);
         const endTime = await page.$eval(endTimeSelector, (element) =>
-          element.textContent.trim(),
+          element.textContent.trim().replace('  ', ' '),
         );
 
         // get weeks
         const weeksSelector = columnSelector(6);
         await page.waitForSelector(weeksSelector);
         const weeks = await page.$eval(weeksSelector, (element) =>
-          element.textContent.trim(),
+          element.textContent.trim().replace('  ', ' '),
         );
 
         // get room
@@ -135,13 +135,14 @@ export async function getTimetable(courses, semester) {
         await page.waitForSelector(roomSelector);
         const room = await page.$eval(
           roomSelector,
-          (element) => element.textContent.trim().split('-')[0],
+          (element) =>
+            element.textContent.trim().replace('  ', ' ').split('-')[0],
         );
 
         const staffSelector = columnSelector(8);
         await page.waitForSelector(staffSelector);
         const staff = await page.$eval(staffSelector, (element) =>
-          element.textContent.trim(),
+          element.textContent.trim().replace('  ', ' '),
         );
 
         // delete row
@@ -197,6 +198,7 @@ export async function getTimetable(courses, semester) {
   try {
     await page.setViewport({ width: 1920, height: 1080 });
     // Navigate to login
+    // TODO: add campus selection
     await page.goto(
       'https://timetable.hw.ac.uk/WebTimetables/LiveDU/login.aspx',
     );
@@ -261,7 +263,7 @@ export async function getTimetable(courses, semester) {
       if (errorTitle || errorLabel) {
         // read error from error label
         const error = await errorLabel.evaluate((element) =>
-          element.textContent.trim(),
+          element.textContent.trim().replace('  ', ' '),
         );
 
         throw new Error(`Error: ${error}`);
