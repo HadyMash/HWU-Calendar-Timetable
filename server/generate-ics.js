@@ -9,6 +9,7 @@ import * as ics from 'ics';
  * @param alert
  * @returns {Promise}
  */
+// TODO: implement timezones
 export const generateICS = async (
   timetable,
   aliasMap,
@@ -67,7 +68,7 @@ export const generateICS = async (
          * Generates a recurrence rule for a set of weeks
          * @param currentDate
          * @param weeks a string of weeks separated by commas and spaces (e.g. '1-12' or '1-5, 7-12')
-         * @returns {RRULE;EXDATE}
+         * @returns {string}
          */
         function generateRecurrence(currentDate, weeks) {
           /*
@@ -174,7 +175,8 @@ export const generateICS = async (
             return `${generateSingleRecurrence(
               splitWeeks[0],
               splitWeeks[splitWeeks.length - 1],
-            )}\nEXDATE=${excludedDays.join(',')} `;
+            )}`;
+            // \nEXDATE=${excludedDays.join(',')} `;
           }
         }
 
@@ -231,15 +233,37 @@ export const generateICS = async (
   console.log('events:', events);
 
   // create ICS file
-  const { error, value } = ics.createEvents(events);
+  let { error, value } = ics.createEvents(events);
   if (error) {
     console.error('error creating ics:', error);
     throw error;
   }
 
+  // TODO: replace DTSTART and DTEND with timezone timestamp
+  const dtstartRegex = /DTSTART:(\d{8}T\d{6})Z/g;
+  const dtendRegex = /DTEND:(\d{8}T\d{6})Z/g;
+
+  // TODO: update when implementing timezones
+  const timezone = 'Asia/Dubai';
+
+  value = value
+    .replace(dtstartRegex, `DTSTART;TZID=${timezone}:$1`)
+    .replace(dtendRegex, `DTEND;TZID=${timezone}:$1`);
+
   console.log(value);
+
+  // TODO: replace EXDATEs with timezone timestamps
+
   return value;
 };
+
+function moveDateToDayOfWeek(currentDate, targetDay) {
+  const currentDay = currentDate.getDay(); // 0 = Sunday, 1 = Monday, ..., 6 = Saturday
+  const daysToAdd = (targetDay - currentDay + 7) % 7; // Calculate days to add
+  const newDate = new Date(currentDate);
+  newDate.setDate(newDate.getDate() + daysToAdd);
+  return newDate;
+}
 
 // ! temp
 
@@ -273,13 +297,5 @@ const timetable = {
     },
   },
 };
-
-function moveDateToDayOfWeek(currentDate, targetDay) {
-  const currentDay = currentDate.getDay(); // 0 = Sunday, 1 = Monday, ..., 6 = Saturday
-  const daysToAdd = (targetDay - currentDay + 7) % 7; // Calculate days to add
-  const newDate = new Date(currentDate);
-  newDate.setDate(newDate.getDate() + daysToAdd);
-  return newDate;
-}
 
 await generateICS(timetable, {}, 1, 12, 0);
