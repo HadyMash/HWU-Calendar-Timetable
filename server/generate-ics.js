@@ -239,7 +239,7 @@ export const generateICS = async (
     throw error;
   }
 
-  // TODO: replace DTSTART and DTEND with timezone timestamp
+  // replace DTSTART and DTEND with timezone timestamp
   const dtstartRegex = /DTSTART:(\d{8}T\d{6})Z/g;
   const dtendRegex = /DTEND:(\d{8}T\d{6})Z/g;
 
