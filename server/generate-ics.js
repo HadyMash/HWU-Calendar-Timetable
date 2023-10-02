@@ -20,6 +20,13 @@ export const generateICS = async (
   // iCal events
   const events = [];
 
+  // TODO: update to use user's timezone
+  const targetTimeZone = 'Asia/Dubai';
+
+  // get timezone offset in hours since the ics library adjusts the time by the timezone, so we want to undo it
+  const hostTimeZoneOffsetMinutes = new Date().getTimezoneOffset() * -1;
+  const hostTimeZoneOffset = hostTimeZoneOffsetMinutes / 60;
+
   // loop through each course
   for (const course in timetable) {
     console.log('course:', course);
@@ -81,6 +88,7 @@ export const generateICS = async (
           /**
            * Returns a recurrence rule for a single set of weeks
            * @param firstInerval m-n, m-n, m
+           * @param lastInterval the last interval in the set of weeks (e.g. m-n, m-n, m)
            */
           const generateSingleRecurrence = (firstInerval, lastInterval) => {
             // if there is only 1 interval, return a recurrence rule for that interval
@@ -113,10 +121,14 @@ export const generateICS = async (
           };
 
           const formatEXDATE = (date) => {
-            const isoString = date.toISOString(); // Convert to ISO 8601 format
-
+            const tempDate = new Date(date);
+            tempDate.setHours(tempDate.getHours() + hostTimeZoneOffset);
+            const isoString = tempDate.toISOString();
             // Remove colons and decimal seconds from the ISO string and add hyphens
-            return isoString.replace(/[:.]/g, '').replace(/-/g, '');
+            return isoString
+              .replace(/[:.]/g, '')
+              .replace(/-/g, '')
+              .replace('Z', '');
           };
 
           // split by commas
@@ -148,8 +160,7 @@ export const generateICS = async (
             return `${generateSingleRecurrence(
               splitWeeks[0],
               splitWeeks[splitWeeks.length - 1],
-            )}`;
-            // \nEXDATE=${excludedDays.join(',')}
+            )}\nEXDATE;TZID=${targetTimeZone}:${excludedDays.join(',')}`;
           }
         }
 
@@ -215,13 +226,6 @@ export const generateICS = async (
   // regex to get any start/end times for the events and replace them with a time including timezone
   const dtstartendRegex = /(DT(?:START|END)):(\d{8}T\d{6}Z)/g;
 
-  // get timezone offset in hours since the ics library adjusts the time by the timezone, so we want to undo it
-  const hostTimeZoneOffsetMinutes = new Date().getTimezoneOffset() * -1;
-  const hostTimeZoneOffset = hostTimeZoneOffsetMinutes / 60;
-
-  // TODO: update to use user's timezone
-  const targetTimeZone = 'Asia/Dubai';
-
   function parseICSDateTime(dateTimeString) {
     const year = parseInt(dateTimeString.substr(0, 4));
     const month = parseInt(dateTimeString.substr(4, 2)) - 1;
@@ -246,8 +250,6 @@ export const generateICS = async (
   };
 
   value = value.replace(dtstartendRegex, formatICSDT);
-
-  // TODO: replace EXDATEs with timezone timestamps
 
   console.log(value);
 
