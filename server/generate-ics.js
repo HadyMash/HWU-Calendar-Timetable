@@ -123,12 +123,10 @@ export const generateICS = async (
           const formatEXDATE = (date) => {
             const tempDate = new Date(date);
             tempDate.setHours(tempDate.getHours() + hostTimeZoneOffset);
-            const isoString = tempDate.toISOString();
-            // Remove colons and decimal seconds from the ISO string and add hyphens
-            return isoString
-              .replace(/[:.]/g, '')
-              .replace(/-/g, '')
-              .replace('Z', '');
+            let isoString = tempDate.toISOString();
+            isoString = isoString.replace(/[:.-]|Z/g, '');
+            // Truncate milliseconds
+            return isoString.slice(0, 15);
           };
 
           // split by commas
@@ -283,7 +281,7 @@ const timetable = {
           type: 'Tut',
           startTime: '13:00',
           endTime: '15:00',
-          weeks: '1-5, 7-12',
+          weeks: '1-4, 7-12',
           room: '2.03',
           staff: 'M. Nair',
         },
