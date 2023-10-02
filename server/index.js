@@ -1,6 +1,7 @@
 import express from 'express';
 import cors from 'cors';
-import { getTimetable } from './pptr.js';
+import { getCourses, getTimetable } from './pptr.js';
+import { generateICS } from './generate-ics.js';
 
 const app = express();
 const port = 3000;
@@ -8,8 +9,36 @@ const port = 3000;
 app.use(express.json());
 app.use(cors());
 
+// TODO: implement caching courses
+app.get('/courses/:campus/:semester', async (req, res) => {
+  try {
+    const campus = req.params.campus;
+    if (!campus) {
+      res.status(400).send('Campus is required');
+      return;
+    }
+
+    const semester = req.params.semester;
+    if (!semester) {
+      res.status(400).send('Semester is required');
+      return;
+    }
+
+    const courses = await getCourses(campus, semester);
+    res.send(courses);
+  } catch (e) {
+    console.log(e);
+  }
+});
+
 app.post('/timetable', async (req, res) => {
   try {
+    const campus = req.body.campus;
+    if (!campus) {
+      res.status(400).send('Campus is required');
+      return;
+    }
+
     const semester = req.body.semester;
     if (!semester) {
       res.status(400).send('Semester is required');
@@ -17,12 +46,17 @@ app.post('/timetable', async (req, res) => {
     }
 
     const courses = req.body.courses;
-    if (!courses) {
+    if (!courses || courses.length === 0) {
       res.status(400).send('Courses are required');
       return;
     }
 
-    const timetable = await getTimetable(courses, semester);
+    if (courses.length > 8) {
+      res.status(400).send('You can only select between 1 and 8 courses');
+      return;
+    }
+
+    const timetable = await getTimetable(campus, courses, semester);
     res.send(timetable);
   } catch (e) {
     console.log(e);

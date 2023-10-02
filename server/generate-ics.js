@@ -29,16 +29,10 @@ export const generateICS = async (
 
   // loop through each course
   for (const course in timetable) {
-    console.log('course:', course);
     // TODO: implement start and end weeks
     const startDate = new Date(timetable[course].dates.start);
     const endDate = new Date(timetable[course].dates.end);
     const days = timetable[course].days;
-
-    console.log('timetable[course]:', timetable[course]);
-    console.log('startDate:', startDate);
-    console.log('endDate:', endDate);
-    console.log('days:', days);
 
     // check if startDate is a Sunday
     if (startDate.getDay() !== 1) {
@@ -64,11 +58,8 @@ export const generateICS = async (
 
     // loop through each day
     for (const day in days) {
-      console.log('day:', day);
       // loop through events on each day
       for (const event of days[day]) {
-        console.log('event:', event);
-
         // recurrence rules function
         /**
          * Generates a recurrence rule for a set of weeks
@@ -212,7 +203,6 @@ export const generateICS = async (
       }
     }
   }
-  console.log('events:', events);
 
   // create ICS file
   let { error, value } = ics.createEvents(events);
@@ -249,8 +239,6 @@ export const generateICS = async (
 
   value = value.replace(dtstartendRegex, formatICSDT);
 
-  console.log(value);
-
   return value;
 };
 
@@ -262,36 +250,37 @@ function moveDateToDayOfWeek(currentDate, targetDay) {
   return newDate;
 }
 
-// ! temp
-const timetable = {
-  'Principles of Chemistry': {
-    days: {
-      Wednesday: [
-        {
-          type: 'Lec',
-          startTime: '13:00',
-          endTime: '15:00',
-          weeks: '1-12',
-          room: '2.03',
-          staff: 'M. Nair',
-        },
-      ],
-      Thursday: [
-        {
-          type: 'Tut',
-          startTime: '13:00',
-          endTime: '15:00',
-          weeks: '1-4, 7-12',
-          room: '2.03',
-          staff: 'M. Nair',
-        },
-      ],
-    },
-    dates: {
-      start: '11 Sep 2023',
-      end: '3 Dec 2023',
-    },
-  },
-};
-
-await generateICS(timetable, {}, 1, 12, 0);
+//
+// // ! temp
+// const timetable = {
+//   'Principles of Chemistry': {
+//     days: {
+//       Wednesday: [
+//         {
+//           type: 'Lec',
+//           startTime: '13:00',
+//           endTime: '15:00',
+//           weeks: '1-12',
+//           room: '2.03',
+//           staff: 'M. Nair',
+//         },
+//       ],
+//       Thursday: [
+//         {
+//           type: 'Tut',
+//           startTime: '13:00',
+//           endTime: '15:00',
+//           weeks: '1-4, 7-12',
+//           room: '2.03',
+//           staff: 'M. Nair',
+//         },
+//       ],
+//     },
+//     dates: {
+//       start: '11 Sep 2023',
+//       end: '3 Dec 2023',
+//     },
+//   },
+// };
+//
+// await generateICS(timetable, {}, 1, 12, 0);

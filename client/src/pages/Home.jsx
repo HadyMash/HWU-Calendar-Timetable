@@ -15,6 +15,7 @@ export function Home() {
    * 4. alerts before event
    */
   const navigate = useNavigate();
+  const campusRef = useRef(null);
   const coursesRef = useRef(null);
   const semesterRef = useRef(null);
   const startWeekRef = useRef(null);
@@ -43,6 +44,7 @@ export function Home() {
     const getSelectedValues = (ref) =>
       ref.current.state.selectValue.map((obj) => obj.value);
 
+    const campus = getSelectedValues(campusRef)[0];
     const courses = getSelectedValues(coursesRef);
     const semester = getSelectedValues(semesterRef)[0];
     const startWeek = getSelectedValues(startWeekRef)[0];
@@ -51,6 +53,11 @@ export function Home() {
 
     // validate
     let valid = true;
+
+    if (!campus) {
+      showErrorMessage('Please select a campus');
+      valid = false;
+    }
 
     if (!courses || courses.length === 0) {
       showErrorMessage('Please select at least one course');
@@ -75,6 +82,7 @@ export function Home() {
     setLoadingSubmit(true);
     try {
       const response = await axios.post('http://localhost:3000/timetable', {
+        campus,
         courses,
         semester,
         startWeek,
@@ -86,6 +94,7 @@ export function Home() {
       navigate('/download', {
         state: {
           response,
+          campus,
           startWeek,
           endWeek,
           alert,
@@ -124,6 +133,28 @@ export function Home() {
           <tbody>
             <tr>
               <td>
+                <label>Campus:</label>
+              </td>
+              <td>
+                <Select
+                  id={'campus'}
+                  name="campus"
+                  options={[
+                    { value: 'Dubai', label: 'Dubai' },
+                    { value: 'Malaysia', label: 'Malaysia' },
+                    { value: 'Edinburgh', label: 'Edinburgh' },
+                    { value: 'Scottish Borders', label: 'Scottish Borders' },
+                    { value: 'Orkney', label: 'Orkney' },
+                  ].sort((a, b) => a.value.localeCompare(b.value))}
+                  defaultValue={{ value: 'Dubai', label: 'Dubai' }}
+                  isDisabled={loadingSubmit}
+                  isSearchable={true}
+                  ref={coursesRef}
+                />
+              </td>
+            </tr>
+            <tr>
+              <td>
                 <label>Courses:</label>
               </td>
               <td>
@@ -137,7 +168,6 @@ export function Home() {
                   isSearchable={true}
                   name={'courses'}
                   ref={coursesRef}
-                  defaultValue={'F28WP-S1'}
                   isMulti
                 />
               </td>

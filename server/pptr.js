@@ -11,6 +11,15 @@ const days = [
   'Sunday',
 ];
 
+const campusTimetableUrls = {
+  dubai: 'https://timetable.hw.ac.uk/WebTimetables/LiveDU/login.aspx',
+  malaysia: 'https://timetable.hw.ac.uk/WebTimetables/LiveMP/login.aspx',
+  edinburgh: 'https://timetable.hw.ac.uk/WebTimetables/LiveED/login.aspx',
+  orkney: 'https://timetable.hw.ac.uk/WebTimetables/LiveOR/login.aspx',
+  'scottish borders':
+    'https://timetable.hw.ac.uk/WebTimetables/LiveSB/login.aspx',
+};
+
 const browser = await puppeteer.launch({ headless: 'new' });
 // const browser = await puppeteer.launch({ headless: false });
 
@@ -37,12 +46,69 @@ const browser = await puppeteer.launch({ headless: 'new' });
 // );
 
 /**
+ * Get a list of courses for a campus and semester
+ * @param campus
+ * @param semester
+ * @returns {Promise} a promise that resolves to a list of courses
+ */
+export async function getCourses(campus, semester) {
+  const url = campusTimetableUrls[campus.toLowerCase()];
+  if (!url) {
+    throw new Error(`Campus ${campus} not found`);
+  }
+
+  const page = await browser.newPage();
+
+  try {
+    // TODO: refactor into a function to avoid duplication between this and getTimetable
+    await page.setViewport({ width: 1920, height: 1080 });
+    // Navigate to login
+    // TODO: add campus selection
+    await page.goto(url);
+
+    // login as guest
+    {
+      const guestButtonSelector = '#bGuestLogin';
+      await page.waitForSelector(guestButtonSelector);
+      await page.click(guestButtonSelector);
+    }
+
+    // go to courses
+    {
+      const coursesSelector = '#LinkBtn_modules';
+      await page.waitForSelector(coursesSelector);
+      await page.click(coursesSelector);
+    }
+
+    // query for courses
+    const coursesSelectorQuery = 'select#dlObject';
+    await page.waitForSelector(coursesSelectorQuery);
+    const coursesSelector = await page.$(coursesSelectorQuery);
+
+    // read select options and map them to return each's value and label
+    const courses = await coursesSelector.$$eval('option', (options) => {
+      return options.map((option) => {
+        return {
+          value: option.value,
+          label: option.textContent.trim().replace('  ', ' '),
+        };
+      });
+    });
+
+    return courses;
+  } finally {
+    await page.close();
+  }
+}
+
+/**
  * Get the timetable for a list of courses in a semester
+ * @param campus
  * @param courses
  * @param semester the semester to get the timetable for (September or January)
- * @returns {Promise<void>}
+ * @returns {Promise} an object containing each course and it's scheduled sessions
  */
-export async function getTimetable(courses, semester) {
+export async function getTimetable(campus, courses, semester) {
   const data = {};
 
   /**
@@ -194,14 +260,17 @@ export async function getTimetable(courses, semester) {
     await page.$eval(selector, (element) => element.remove());
   }
 
+  const url = campusTimetableUrls[campus.toLowerCase()];
+  if (!url) {
+    throw new Error(`Campus ${campus} not found`);
+  }
+
   const page = await browser.newPage();
   try {
     await page.setViewport({ width: 1920, height: 1080 });
     // Navigate to login
     // TODO: add campus selection
-    await page.goto(
-      'https://timetable.hw.ac.uk/WebTimetables/LiveDU/login.aspx',
-    );
+    await page.goto(url);
 
     // login as guest
     {
