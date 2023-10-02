@@ -9,7 +9,7 @@ import * as ics from 'ics';
  * @param alert
  * @returns {Promise}
  */
-// TODO: implement timezones
+// TODO: implement timezones with campus locations
 export const generateICS = async (
   timetable,
   aliasMap,
@@ -61,7 +61,6 @@ export const generateICS = async (
       // loop through events on each day
       for (const event of days[day]) {
         console.log('event:', event);
-        // TODO: handle timezones
 
         // recurrence rules function
         /**
@@ -113,29 +112,17 @@ export const generateICS = async (
             }
           };
 
-          const isoString = (date) => {
+          const formatEXDATE = (date) => {
             const isoString = date.toISOString(); // Convert to ISO 8601 format
 
             // Remove colons and decimal seconds from the ISO string and add hyphens
-            const formattedDate = isoString
-              .replace(/[:.]/g, '')
-              .replace(/-/g, '');
-
-            // // Add 'T' and 'Z' to the formatted date to match the desired format
-            // const utcFormattedDate =
-            //   formattedDate.slice(0, 8) + 'T' + formattedDate.slice(8) + 'Z';
-
-            return formattedDate;
+            return isoString.replace(/[:.]/g, '').replace(/-/g, '');
           };
 
           // split by commas
           const splitWeeks = weeks.split(', ');
           if (splitWeeks.length === 1) {
             // m-n or m-m case
-            // return {
-            //   rrule: generateSingleRecurrence(splitWeeks[0]),
-            //   exdate: undefined,
-            // };
             return generateSingleRecurrence(splitWeeks[0]);
           } else {
             // m-n, ..., p-q case
@@ -154,29 +141,15 @@ export const generateICS = async (
                   event.startTime.split(':')[1],
                 );
                 // add excluded week
-                excludedDays.push(isoString(newDate));
-
-                // excludedDays.push(
-                //   `${newDate.getFullYear()}${
-                //     newDate.getMonth() + 1
-                //   }${newDate.getDate()}`,
-                // );
+                excludedDays.push(formatEXDATE(newDate));
               }
             }
-
-            // return {
-            //   rrule: generateSingleRecurrence(
-            //     splitWeeks[0],
-            //     splitWeeks[splitWeeks.length - 1],
-            //   ),
-            //   exdate: excludedDays.join(','),
-            // };
 
             return `${generateSingleRecurrence(
               splitWeeks[0],
               splitWeeks[splitWeeks.length - 1],
             )}`;
-            // \nEXDATE=${excludedDays.join(',')} `;
+            // \nEXDATE=${excludedDays.join(',')}
           }
         }
 
@@ -239,20 +212,44 @@ export const generateICS = async (
     throw error;
   }
 
-  // replace DTSTART and DTEND with timezone timestamp
-  const dtstartRegex = /DTSTART:(\d{8}T\d{6})Z/g;
-  const dtendRegex = /DTEND:(\d{8}T\d{6})Z/g;
+  // regex to get any start/end times for the events and replace them with a time including timezone
+  const dtstartendRegex = /(DT(?:START|END)):(\d{8}T\d{6}Z)/g;
 
-  // TODO: update when implementing timezones
-  const timezone = 'Asia/Dubai';
+  // get timezone offset in hours since the ics library adjusts the time by the timezone, so we want to undo it
+  const hostTimeZoneOffsetMinutes = new Date().getTimezoneOffset() * -1;
+  const hostTimeZoneOffset = hostTimeZoneOffsetMinutes / 60;
 
-  value = value
-    .replace(dtstartRegex, `DTSTART;TZID=${timezone}:$1`)
-    .replace(dtendRegex, `DTEND;TZID=${timezone}:$1`);
+  // TODO: update to use user's timezone
+  const targetTimeZone = 'Asia/Dubai';
 
-  console.log(value);
+  function parseICSDateTime(dateTimeString) {
+    const year = parseInt(dateTimeString.substr(0, 4));
+    const month = parseInt(dateTimeString.substr(4, 2)) - 1;
+    const day = parseInt(dateTimeString.substr(6, 2));
+    const hour = parseInt(dateTimeString.substr(9, 2));
+    const minute = parseInt(dateTimeString.substr(11, 2));
+    const second = parseInt(dateTimeString.substr(13, 2));
+
+    const utcTime = Date.UTC(year, month, day, hour, minute, second);
+    return new Date(utcTime);
+  }
+
+  function formatDate(dateStr) {
+    return dateStr.replace(/[:.]/g, '').replace(/-/g, '');
+  }
+
+  const formatICSDT = (_, dtType, dateTime) => {
+    const utcDate = parseICSDateTime(dateTime);
+    utcDate.setUTCHours(utcDate.getUTCHours() + hostTimeZoneOffset);
+    const formattedTime = utcDate.toISOString().replace(/\.\d{3}Z$/, '');
+    return `${dtType};TZID=${targetTimeZone}:${formatDate(formattedTime)}`;
+  };
+
+  value = value.replace(dtstartendRegex, formatICSDT);
 
   // TODO: replace EXDATEs with timezone timestamps
+
+  console.log(value);
 
   return value;
 };
@@ -266,7 +263,6 @@ function moveDateToDayOfWeek(currentDate, targetDay) {
 }
 
 // ! temp
-
 const timetable = {
   'Principles of Chemistry': {
     days: {
