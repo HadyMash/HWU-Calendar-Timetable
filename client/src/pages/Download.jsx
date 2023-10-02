@@ -1,12 +1,16 @@
-import { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import { Tooltip } from 'react-tooltip';
 import PropagateLoader from 'react-spinners/PropagateLoader.js';
 import { useLocation } from 'react-router-dom';
+import { toast, ToastContainer } from 'react-toastify';
+import axios from 'axios';
+import { saveAs } from 'file-saver';
 
 export function Download() {
   const location = useLocation();
   // TODO: rename to avoid confusion
   const serverResponse = location.state.response;
+  const courses = serverResponse.data;
   const startWeek = location.state.startWeek;
   const endWeek = location.state.endWeek;
   const alert = location.state.alert;
@@ -14,11 +18,24 @@ export function Download() {
   const [showDuplicates, setShowDuplicates] = useState(false);
   const [downloading, setDownloading] = useState(false);
 
+  const showErrorMessage = (message) => {
+    toast.error(message, {
+      position: 'top-right',
+      autoClose: 5000,
+      hideProgressBar: false,
+      closeOnClick: true,
+      pauseOnHover: true,
+      draggable: true,
+      progress: undefined,
+      theme: 'light',
+    });
+  };
+
   const generateAliasRows = () => {
     const aliasRows = [];
     for (const course in courses) {
       aliasRows.push(
-        <>
+        <React.Fragment key={course}>
           <label
             htmlFor={`${course}-alias`}
             data-tooltip-id={`${course}-tooltip`}
@@ -34,7 +51,7 @@ export function Download() {
               setAliasMap((prev) => ({ ...prev, [course]: e.target.value }))
             }
           />
-        </>,
+        </React.Fragment>,
       );
     }
     return aliasRows;
@@ -46,7 +63,38 @@ export function Download() {
   };
 
   // TODO: implement
-  const handleDownload = () => {};
+  const handleDownload = async () => {
+    setDownloading(true);
+    try {
+      const response = await axios.post(
+        'http://localhost:3000/generate-ics',
+        {
+          timetable: courses,
+          aliasMap,
+          startWeek,
+          endWeek,
+          alert,
+        },
+        {
+          responseType: 'blob',
+        },
+      );
+
+      const blob = new Blob([response.data], { type: 'text/calendar' });
+      const semesterLabel = location.state.semesterLabel;
+      saveAs(
+        blob,
+        `HWU ${new Date().getFullYear()} ${semesterLabel} Timetable.ics`,
+      );
+
+      // if (response.status)
+    } catch (error) {
+      console.error(error);
+      showErrorMessage('Something went wrong, please try again later');
+    } finally {
+      setDownloading(false);
+    }
+  };
 
   return (
     <div className={'download'}>
@@ -75,10 +123,11 @@ export function Download() {
           {downloading ? (
             <PropagateLoader color={'white'} loading={true} size={5} />
           ) : (
-            'Get Timetable'
+            'Download'
           )}{' '}
         </button>
       </div>
+      <ToastContainer />
     </div>
   );
 }

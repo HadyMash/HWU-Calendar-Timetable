@@ -4,7 +4,7 @@ import Select from 'react-select';
 import PropagateLoader from 'react-spinners/PropagateLoader';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-import { courses, semesters } from '../data.js';
+import { semesters } from '../data.js';
 import { useNavigate } from 'react-router-dom';
 
 export function Home() {
@@ -15,38 +15,41 @@ export function Home() {
    * 4. alerts before event
    */
   const navigate = useNavigate();
-  const campusRef = useRef(null);
+  const [campus, setCampus] = useState(null);
+  const [coursesAbortController, setCoursesAbortController] = useState(null);
+  const [courses, setCourses] = useState(null);
   const coursesRef = useRef(null);
   const semesterRef = useRef(null);
   const startWeekRef = useRef(null);
   const endWeekRef = useRef(null);
   const alertRef = useRef(null);
 
+  const [loadingCourses, setLoadingCourses] = useState(false);
   const [loadingSubmit, setLoadingSubmit] = useState(false);
+
+  const showErrorMessage = (message) => {
+    toast.error(message, {
+      position: 'top-right',
+      autoClose: 5000,
+      hideProgressBar: false,
+      closeOnClick: true,
+      pauseOnHover: true,
+      draggable: true,
+      progress: undefined,
+      theme: 'light',
+    });
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (loadingSubmit) return;
 
-    const showErrorMessage = (message) => {
-      toast.error(message, {
-        position: 'top-right',
-        autoClose: 5000,
-        hideProgressBar: false,
-        closeOnClick: true,
-        pauseOnHover: true,
-        draggable: true,
-        progress: undefined,
-        theme: 'light',
-      });
-    };
-
     const getSelectedValues = (ref) =>
       ref.current.state.selectValue.map((obj) => obj.value);
 
-    const campus = getSelectedValues(campusRef)[0];
     const courses = getSelectedValues(coursesRef);
     const semester = getSelectedValues(semesterRef)[0];
+    const semesterLabel = semesterRef.current.state.selectValue[0].label;
     const startWeek = getSelectedValues(startWeekRef)[0];
     const endWeek = getSelectedValues(endWeekRef)[0];
     const alert = getSelectedValues(alertRef)[0];
@@ -95,6 +98,7 @@ export function Home() {
         state: {
           response,
           campus,
+          semesterLabel,
           startWeek,
           endWeek,
           alert,
@@ -146,10 +150,41 @@ export function Home() {
                     { value: 'Scottish Borders', label: 'Scottish Borders' },
                     { value: 'Orkney', label: 'Orkney' },
                   ].sort((a, b) => a.value.localeCompare(b.value))}
-                  defaultValue={{ value: 'Dubai', label: 'Dubai' }}
                   isDisabled={loadingSubmit}
                   isSearchable={true}
-                  ref={coursesRef}
+                  onChange={async (e) => {
+                    setCampus(e.value);
+                    setLoadingCourses(true);
+                    if (coursesAbortController) {
+                      coursesAbortController.abort();
+                    }
+                    const abortController = new AbortController();
+                    setCoursesAbortController(abortController);
+
+                    try {
+                      const response = await axios.get(
+                        `http://localhost:3000/courses/${e.value}`,
+                        {
+                          signal: abortController.signal,
+                        },
+                      );
+
+                      if (response.status === 200) {
+                        console.log(response.data);
+                        setCourses(response.data);
+                      } else {
+                        console.log(response.data);
+                        showErrorMessage(
+                          `Error ${response.status}: ${response.data}`,
+                        );
+                      }
+                    } catch (e) {
+                      console.error(e);
+                      showErrorMessage(`Error: ${e.message}`);
+                    } finally {
+                      setLoadingCourses(false);
+                    }
+                  }}
                 />
               </td>
             </tr>
@@ -164,9 +199,24 @@ export function Home() {
                   id={'courses'}
                   options={courses}
                   closeMenuOnSelect={false}
-                  isDisabled={loadingSubmit}
+                  isDisabled={
+                    loadingSubmit ||
+                    loadingCourses ||
+                    !courses ||
+                    courses?.length === 0
+                  }
                   isSearchable={true}
                   name={'courses'}
+                  isLoading={loadingCourses}
+                  placeholder={
+                    loadingCourses
+                      ? 'Loading...'
+                      : !campus
+                      ? 'Please select a campus'
+                      : !courses || courses?.length === 0
+                      ? 'No courses found'
+                      : 'Select courses'
+                  }
                   ref={coursesRef}
                   isMulti
                 />

@@ -10,13 +10,7 @@ import * as ics from 'ics';
  * @returns {Promise}
  */
 // TODO: implement timezones with campus locations
-export const generateICS = async (
-  timetable,
-  aliasMap,
-  startWeek,
-  endWeek,
-  alert,
-) => {
+export const generateICS = (timetable, aliasMap, startWeek, endWeek, alert) => {
   // iCal events
   const events = [];
 
@@ -239,6 +233,8 @@ export const generateICS = async (
 
   value = value.replace(dtstartendRegex, formatICSDT);
 
+  // TODO: replace PRODID
+
   return value;
 };
 
@@ -283,4 +279,4 @@ function moveDateToDayOfWeek(currentDate, targetDay) {
 //   },
 // };
 //
-// await generateICS(timetable, {}, 1, 12, 0);
+// generateICS(timetable, {}, 1, 12, 0);

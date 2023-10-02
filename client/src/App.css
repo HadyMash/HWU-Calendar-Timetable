@@ -32,6 +32,7 @@ table td:has(div) {
     max-width: 750px;
 }
 
+/* TODO: fix css affecting react toastify x button*/
 button {
     margin-top: 20px;
     height: 42px;

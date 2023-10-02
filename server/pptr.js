@@ -51,7 +51,7 @@ const browser = await puppeteer.launch({ headless: 'new' });
  * @param semester
  * @returns {Promise} a promise that resolves to a list of courses
  */
-export async function getCourses(campus, semester) {
+export async function getCourses(campus) {
   const url = campusTimetableUrls[campus.toLowerCase()];
   if (!url) {
     throw new Error(`Campus ${campus} not found`);

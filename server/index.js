@@ -10,7 +10,7 @@ app.use(express.json());
 app.use(cors());
 
 // TODO: implement caching courses
-app.get('/courses/:campus/:semester', async (req, res) => {
+app.get('/courses/:campus', async (req, res) => {
   try {
     const campus = req.params.campus;
     if (!campus) {
@@ -18,16 +18,11 @@ app.get('/courses/:campus/:semester', async (req, res) => {
       return;
     }
 
-    const semester = req.params.semester;
-    if (!semester) {
-      res.status(400).send('Semester is required');
-      return;
-    }
-
-    const courses = await getCourses(campus, semester);
+    const courses = await getCourses(campus);
     res.send(courses);
   } catch (e) {
-    console.log(e);
+    console.error(e);
+    res.status(500).send('Internal server error');
   }
 });
 
@@ -65,7 +60,7 @@ app.post('/timetable', async (req, res) => {
   }
 });
 
-app.post('/generate-ics', async (req, res) => {
+app.post('/generate-ics', (req, res) => {
   try {
     const timetable = req.body.timetable;
     if (!timetable) {
@@ -81,13 +76,14 @@ app.post('/generate-ics', async (req, res) => {
     }
     const alert = req.body.alert ?? 0;
 
-    const ics = await generateICS(
-      timetable,
-      aliasMap,
-      startWeek,
-      endWeek,
-      alert,
-    );
+    const ics = generateICS(timetable, aliasMap, startWeek, endWeek, alert);
+
+    console.log('api ics', ics);
+
+    res.setHeader('Content-Type', 'text/calendar');
+    res.setHeader('Content-Disposition', 'attachment; filename=timetable.ics');
+
+    res.send(ics);
   } catch (e) {
     console.error(e);
     // TODO: save error to log file
