@@ -48,7 +48,6 @@ const browser = await puppeteer.launch({ headless: 'new' });
 async function navigateToCourses(page, url) {
   await page.setViewport({ width: 1920, height: 1080 });
   // Navigate to login
-  // TODO: add campus selection
   await page.goto(url);
 
   // login as guest
