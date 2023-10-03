@@ -13,20 +13,11 @@ const campusTimezones = {
  * @param campus
  * @param timetable the timetable returned by /timetable
  * @param aliasMap a js object mapping course names to aliases
- * @param startWeek the week to start the timetable from (1-12)
- * @param endWeek the week to end the timetable at (1-12)
  * @param alert
  * @returns {string}
  */
 // TODO: implement timezones with campus locations
-export const generateICS = (
-  campus,
-  timetable,
-  aliasMap,
-  startWeek,
-  endWeek,
-  alert,
-) => {
+export const generateICS = (campus, timetable, aliasMap, alert) => {
   // iCal events
   const events = [];
 
@@ -42,7 +33,6 @@ export const generateICS = (
 
   // loop through each course
   for (const course in timetable) {
-    // TODO: implement start and end weeks
     const startDate = new Date(timetable[course].dates.start);
     const endDate = new Date(timetable[course].dates.end);
     const days = timetable[course].days;
@@ -64,11 +54,6 @@ export const generateICS = (
       throw new Error('Start date is after end date');
     }
 
-    // check if startWeek is before endWeek
-    if (startWeek > endWeek) {
-      throw new Error('Start week is after end week');
-    }
-
     // loop through each day
     for (const day in days) {
       // loop through events on each day
@@ -77,7 +62,7 @@ export const generateICS = (
         /**
          * Generates a recurrence rule for a set of weeks
          * @param currentDate
-         * @param weeks a string of weeks separated by commas and spaces (e.g. '1-12' or '1-5, 7-12')
+         * @param weeks an array of week intervals or single weeks (e.g. ['1-12'] or ['1-4', '8'] or ['1-5'. '7-12'])
          * @returns {string}
          */
         function generateRecurrence(currentDate, weeks) {
@@ -133,19 +118,18 @@ export const generateICS = (
             return isoString.slice(0, 15);
           };
 
-          // split by commas
-          const splitWeeks = weeks.split(', ');
-          if (splitWeeks.length === 1) {
+          if (weeks.length === 1) {
             // m-n or m-m case
-            return generateSingleRecurrence(splitWeeks[0]);
+            return generateSingleRecurrence(weeks[0]);
           } else {
             // m-n, ..., p-q case
             const excludedDays = [];
-            for (let i = 1; i < splitWeeks.length; i++) {
+            for (let i = 1; i < weeks.length; i++) {
+              const firstIntervalSplit = weeks[i - 1].split('-');
               const firstIntervalEnd = parseInt(
-                splitWeeks[i - 1].split('-')[1],
+                firstIntervalSplit[firstIntervalSplit.length - 1],
               );
-              const secondIntervalStart = parseInt(splitWeeks[i].split('-')[0]);
+              const secondIntervalStart = parseInt(weeks[i].split('-')[0]);
               const gap = secondIntervalStart - firstIntervalEnd - 1;
               for (let j = firstIntervalEnd; j < gap + firstIntervalEnd; j++) {
                 const newDate = new Date(currentDate);
@@ -160,8 +144,8 @@ export const generateICS = (
             }
 
             return `${generateSingleRecurrence(
-              splitWeeks[0],
-              splitWeeks[splitWeeks.length - 1],
+              weeks[0],
+              weeks[weeks.length - 1],
             )}\nEXDATE;TZID=${targetTimeZone}:${excludedDays.join(',')}`;
           }
         }
@@ -179,7 +163,7 @@ export const generateICS = (
         const currentDate = moveDateToDayOfWeek(startDate, dayMap[day]);
         // move date to the correct week
         currentDate.setDate(
-          currentDate.getDate() + 7 * (event.weeks.split('-')[0] - 1),
+          currentDate.getDate() + 7 * (parseInt(event.weeks[0].split('-')) - 1),
         );
 
         const rrule = generateRecurrence(currentDate, event.weeks);
@@ -228,12 +212,12 @@ export const generateICS = (
   const dtStartEndRegex = /(DT(?:START|END)):(\d{8}T\d{6}Z)/g;
 
   function parseICSDateTime(dateTimeString) {
-    const year = parseInt(dateTimeString.substring(0, 4));
-    const month = parseInt(dateTimeString.substring(4, 2)) - 1;
-    const day = parseInt(dateTimeString.substring(6, 2));
-    const hour = parseInt(dateTimeString.substring(9, 2));
-    const minute = parseInt(dateTimeString.substring(11, 2));
-    const second = parseInt(dateTimeString.substring(13, 2));
+    const year = parseInt(dateTimeString.substr(0, 4));
+    const month = parseInt(dateTimeString.substr(4, 2)) - 1;
+    const day = parseInt(dateTimeString.substr(6, 2));
+    const hour = parseInt(dateTimeString.substr(9, 2));
+    const minute = parseInt(dateTimeString.substr(11, 2));
+    const second = parseInt(dateTimeString.substr(13, 2));
 
     const utcTime = Date.UTC(year, month, day, hour, minute, second);
     return new Date(utcTime);

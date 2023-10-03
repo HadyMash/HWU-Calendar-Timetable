@@ -4,13 +4,10 @@ import Select from 'react-select';
 import PropagateLoader from 'react-spinners/PropagateLoader';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-import { semesters } from '../data.js';
 import { useNavigate } from 'react-router-dom';
 
 export function Home() {
   /* Things to implement
-   * 1. from week n
-   * 2. to week n
    * 3. detect overlaps for multiple classrooms for the same subject
    * 4. alerts before event
    */
@@ -18,13 +15,13 @@ export function Home() {
   const [campus, setCampus] = useState(null);
   const [coursesAbortController, setCoursesAbortController] = useState(null);
   const [courses, setCourses] = useState(null);
+  // TODO: add multiselect and implement reading each set
+  const [weeks, setWeeks] = useState(null);
   const coursesRef = useRef(null);
-  const semesterRef = useRef(null);
-  const startWeekRef = useRef(null);
-  const endWeekRef = useRef(null);
+  const weeksRef = useRef(null);
   const alertRef = useRef(null);
 
-  const [loadingCourses, setLoadingCourses] = useState(false);
+  const [loadingCampusOptions, setLoadingCampusOptions] = useState(false);
   const [loadingSubmit, setLoadingSubmit] = useState(false);
 
   const showErrorMessage = (message) => {
@@ -40,6 +37,53 @@ export function Home() {
     });
   };
 
+  const handleCampusChange = async (e) => {
+    setCampus(e.value);
+    setLoadingCampusOptions(true);
+
+    // cancel previous request if it exists
+    if (coursesAbortController) {
+      coursesAbortController.abort();
+    }
+
+    // clear courses and weeks currently selected values
+    coursesRef.current.select.clearValue();
+    weeksRef.current.select.clearValue();
+
+    const abortController = new AbortController();
+    setCoursesAbortController(abortController);
+
+    let cancelled = false;
+
+    try {
+      const response = await axios.get(
+        `http://localhost:3000/${e.value}/options`,
+        {
+          signal: abortController.signal,
+        },
+      );
+
+      if (response.status === 200) {
+        console.log(response.data);
+        const data = response.data;
+        setCourses(data.courses);
+        setWeeks(data.weeks);
+      } else {
+        console.log(response.data);
+        showErrorMessage(`Error ${response.status}: ${response.data}`);
+      }
+    } catch (e) {
+      if (e.message === 'canceled') {
+        cancelled = true;
+        return;
+      }
+      console.error(e);
+      showErrorMessage(`Error: ${e.message}`);
+    } finally {
+      if (!cancelled) setLoadingCampusOptions(false);
+    }
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (loadingSubmit) return;
@@ -48,10 +92,7 @@ export function Home() {
       ref.current.state.selectValue.map((obj) => obj.value);
 
     const courses = getSelectedValues(coursesRef);
-    const semester = getSelectedValues(semesterRef)[0];
-    const semesterLabel = semesterRef.current.state.selectValue[0].label;
-    const startWeek = getSelectedValues(startWeekRef)[0];
-    const endWeek = getSelectedValues(endWeekRef)[0];
+    const weeks = getSelectedValues(weeksRef);
     const alert = getSelectedValues(alertRef)[0];
 
     // validate
@@ -66,30 +107,19 @@ export function Home() {
       showErrorMessage('Please select at least one course');
       valid = false;
     }
-    if (!semester) {
-      showErrorMessage('Please select a semester');
+    if (!weeks) {
+      showErrorMessage('Please select at least one week');
       valid = false;
     }
-    if (!startWeek) {
-      showErrorMessage('Please select a start week');
-      valid = false;
-    }
-    if (!endWeek) {
-      showErrorMessage('Please select an end week');
-      valid = false;
-    }
-
     if (!valid) return;
 
-    // make call to rest api
+    // make call to api
     setLoadingSubmit(true);
     try {
       const response = await axios.post('http://localhost:3000/timetable', {
         campus,
         courses,
-        semester,
-        startWeek,
-        endWeek,
+        weeks,
         alert,
       });
       console.log(response);
@@ -98,9 +128,6 @@ export function Home() {
         state: {
           response,
           campus,
-          semesterLabel,
-          startWeek,
-          endWeek,
           alert,
         },
       });
@@ -114,16 +141,6 @@ export function Home() {
     } finally {
       setLoadingSubmit(false);
     }
-  };
-
-  const generateWeekOptions = () => {
-    const options = new Array(12);
-
-    for (let i = 1; i <= 12; i++) {
-      options[i - 1] = { value: `Week ${i}`, label: `Week ${i}` };
-    }
-
-    return options;
   };
 
   return (
@@ -152,39 +169,7 @@ export function Home() {
                   ].sort((a, b) => a.value.localeCompare(b.value))}
                   isDisabled={loadingSubmit}
                   isSearchable={true}
-                  onChange={async (e) => {
-                    setCampus(e.value);
-                    setLoadingCourses(true);
-                    if (coursesAbortController) {
-                      coursesAbortController.abort();
-                    }
-                    const abortController = new AbortController();
-                    setCoursesAbortController(abortController);
-
-                    try {
-                      const response = await axios.get(
-                        `http://localhost:3000/courses/${e.value}`,
-                        {
-                          signal: abortController.signal,
-                        },
-                      );
-
-                      if (response.status === 200) {
-                        console.log(response.data);
-                        setCourses(response.data);
-                      } else {
-                        console.log(response.data);
-                        showErrorMessage(
-                          `Error ${response.status}: ${response.data}`,
-                        );
-                      }
-                    } catch (e) {
-                      console.error(e);
-                      showErrorMessage(`Error: ${e.message}`);
-                    } finally {
-                      setLoadingCourses(false);
-                    }
-                  }}
+                  onChange={handleCampusChange}
                 />
               </td>
             </tr>
@@ -201,15 +186,15 @@ export function Home() {
                   closeMenuOnSelect={false}
                   isDisabled={
                     loadingSubmit ||
-                    loadingCourses ||
+                    loadingCampusOptions ||
                     !courses ||
                     courses?.length === 0
                   }
                   isSearchable={true}
                   name={'courses'}
-                  isLoading={loadingCourses}
+                  isLoading={loadingCampusOptions}
                   placeholder={
-                    loadingCourses
+                    loadingCampusOptions
                       ? 'Loading...'
                       : !campus
                       ? 'Please select a campus'
@@ -224,49 +209,33 @@ export function Home() {
             </tr>
             <tr>
               <td>
-                <label>Semester:</label>
+                <label>Weeks:</label>
               </td>
               <td>
                 <Select
-                  id={'semester'}
-                  name="semester"
-                  defaultValue={semesters[0]}
-                  isDisabled={loadingSubmit}
+                  id={'weeks'}
+                  name="weeks"
+                  isLoading={loadingCampusOptions}
+                  isDisabled={
+                    loadingSubmit ||
+                    loadingCampusOptions ||
+                    !weeks ||
+                    weeks?.length === 0
+                  }
                   isSearchable={true}
-                  options={semesters}
-                  ref={semesterRef}
-                />
-              </td>
-            </tr>
-            <tr>
-              <td>
-                <label>From week:</label>
-              </td>
-              <td>
-                <Select
-                  id={'start-week'}
-                  name={'start-week'}
-                  defaultValue={{ value: 'Week 1', label: 'Week 1' }}
-                  isDisabled={loadingSubmit}
-                  isSearchable={true}
-                  options={generateWeekOptions()}
-                  ref={startWeekRef}
-                />
-              </td>
-            </tr>
-            <tr>
-              <td>
-                <label>To week:</label>
-              </td>
-              <td>
-                <Select
-                  id={'end-week'}
-                  name={'end-week'}
-                  defaultValue={{ value: 'Week 12', label: 'Week 12' }}
-                  isDisabled={loadingSubmit}
-                  isSearchable={true}
-                  options={generateWeekOptions()}
-                  ref={endWeekRef}
+                  options={weeks}
+                  placeholder={
+                    loadingCampusOptions
+                      ? 'Loading...'
+                      : !campus
+                      ? 'Please select a campus'
+                      : !courses || courses?.length === 0
+                      ? 'No weeks found'
+                      : 'Select weeks'
+                  }
+                  ref={weeksRef}
+                  closeMenuOnSelect={false}
+                  isMulti
                 />
               </td>
             </tr>

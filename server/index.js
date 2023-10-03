@@ -1,6 +1,6 @@
 import express from 'express';
 import cors from 'cors';
-import { getCourses, getTimetable } from './pptr.js';
+import { getCampusOptions, getTimetable } from './pptr.js';
 import { generateICS } from './generate-ics.js';
 
 const app = express();
@@ -10,7 +10,7 @@ app.use(express.json());
 app.use(cors());
 
 // TODO: implement caching courses
-app.get('/courses/:campus', async (req, res) => {
+app.get('/:campus/options', async (req, res) => {
   try {
     const campus = req.params.campus;
     if (!campus) {
@@ -18,7 +18,7 @@ app.get('/courses/:campus', async (req, res) => {
       return;
     }
 
-    const courses = await getCourses(campus);
+    const courses = await getCampusOptions(campus);
     res.send(courses);
   } catch (e) {
     console.error(e);
@@ -34,9 +34,9 @@ app.post('/timetable', async (req, res) => {
       return;
     }
 
-    const semester = req.body.semester;
-    if (!semester) {
-      res.status(400).send('Semester is required');
+    const weeks = req.body.weeks;
+    if (!weeks) {
+      res.status(400).send('At least 1 week is required');
       return;
     }
 
@@ -51,7 +51,7 @@ app.post('/timetable', async (req, res) => {
       return;
     }
 
-    const timetable = await getTimetable(campus, courses, semester);
+    const timetable = await getTimetable(campus, courses, weeks);
     res.send(timetable);
   } catch (e) {
     console.log(e);
@@ -73,22 +73,9 @@ app.post('/generate-ics', (req, res) => {
       return;
     }
     const aliasMap = req.body.aliasMap;
-    const startWeek = req.body.startWeek ?? 1;
-    const endWeek = req.body.endWeek ?? 12;
-    if (startWeek > endWeek) {
-      res.status(400).send('Start week is after end week');
-      return;
-    }
     const alert = req.body.alert ?? 0;
 
-    const ics = generateICS(
-      campus,
-      timetable,
-      aliasMap,
-      startWeek,
-      endWeek,
-      alert,
-    );
+    const ics = generateICS(campus, timetable, aliasMap, alert);
 
     console.log('api ics', ics);
 

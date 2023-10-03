@@ -1,4 +1,5 @@
 import puppeteer from 'puppeteer';
+import { overlappingWeeks } from './overlap.js';
 // import util from 'util';
 
 const days = [
@@ -34,11 +35,11 @@ const browser = await puppeteer.launch({ headless: 'new' });
 // ];
 // const courses = ['B17CA-S1', 'B18AP-S1'];
 // const courses = ['F28ED-S1'];
-// const semester = '2;3;4;5;6;7;8;9;10;11;12;13';
+// const weeks = ['2;3;4;5;6;7;8;9;10;11;12;13'];
 
 // console.log(
 //   util.inspect(
-//     await getTimetable(courses, semester),
+//     await getTimetable(courses, weeks),
 //     false,
 //     null,
 //     true /* enable colors */,
@@ -66,11 +67,11 @@ async function navigateToCourses(page, url) {
 }
 
 /**
- * Get a list of courses for a campus and semester
+ * Get a list of courses for a campus and weeks
  * @param campus
  * @returns {Promise} a promise that resolves to a list of courses
  */
-export async function getCourses(campus) {
+export async function getCampusOptions(campus) {
   const url = campusTimetableUrls[campus.toLowerCase()];
   if (!url) {
     throw new Error(`Campus ${campus} not found`);
@@ -87,7 +88,7 @@ export async function getCourses(campus) {
     const coursesSelector = await page.$(coursesSelectorQuery);
 
     // read select options and map them to return each's value and label
-    return await coursesSelector.$$eval('option', (options) => {
+    const courses = await coursesSelector.$$eval('option', (options) => {
       return options.map((option) => {
         return {
           value: option.value,
@@ -95,19 +96,34 @@ export async function getCourses(campus) {
         };
       });
     });
+
+    const weeksSelectorQuery = 'select#lbWeeks';
+    await page.waitForSelector(weeksSelectorQuery);
+    const weeksSelector = await page.$(weeksSelectorQuery);
+
+    const weeks = await weeksSelector.$$eval('option', (options) => {
+      return options.map((option) => {
+        return {
+          value: option.value,
+          label: option.textContent.trim().replace('  ', ' '),
+        };
+      });
+    });
+
+    return { courses, weeks };
   } finally {
     await page.close();
   }
 }
 
 /**
- * Get the timetable for a list of courses in a semester
+ * Get the timetable for a list of courses in a weeks
  * @param campus
  * @param courses
- * @param semester the semester to get the timetable for (September or January)
+ * @param weeks the weeks to get the timetable for
  * @returns {Promise} an object containing each course and it's scheduled sessions
  */
-export async function getTimetable(campus, courses, semester) {
+export async function getTimetable(campus, courses, weeks) {
   const data = {};
 
   /**
@@ -123,7 +139,18 @@ export async function getTimetable(campus, courses, semester) {
       element.textContent.trim().replace('  ', ' '),
     );
 
-    // get semester start and end dates
+    // get week intervals and start and end dates
+    // get week intervals
+    const weekIntervalsSelector = 'span.header-1-2-1';
+    await page.waitForSelector(weekIntervalsSelector);
+    const weekIntervals = await page.$eval(weekIntervalsSelector, (element) => {
+      const text = element.textContent
+        .trim()
+        .replace('  ', ' ')
+        .replace(' ', '');
+      return text.split(',');
+    });
+    // get  start and end dates of the selected period
     const datesSelector = 'span.header-1-2-3';
     await page.waitForSelector(datesSelector);
     const dates = await page.$eval(datesSelector, (element) => {
@@ -191,8 +218,13 @@ export async function getTimetable(campus, courses, semester) {
         // get weeks
         const weeksSelector = columnSelector(6);
         await page.waitForSelector(weeksSelector);
-        const weeks = await page.$eval(weeksSelector, (element) =>
+        const sessionWeeks = await page.$eval(weeksSelector, (element) =>
           element.textContent.trim().replace('  ', ' '),
+        );
+
+        const finalWeeks = overlappingWeeks(
+          sessionWeeks.split(','),
+          weekIntervals,
         );
 
         // get room
@@ -218,7 +250,7 @@ export async function getTimetable(campus, courses, semester) {
           type,
           startTime,
           endTime,
-          weeks,
+          weeks: finalWeeks,
           room,
           staff,
         };
@@ -277,16 +309,22 @@ export async function getTimetable(campus, courses, semester) {
     // select courses
     await select('select#dlObject', courses);
 
-    // select semester
-    await select('select#lbWeeks', [semester]);
+    // select weeks
+    await select('select#lbWeeks', weeks);
 
     // select all days
     const allDays = '1-7';
     await select('select#lbDays', [allDays]);
 
-    // select DayEvening
-    const dayEvening = '1-56';
-    await select('select#dlPeriod', [dayEvening]);
+    if (campus === 'dubai') {
+      // select DayEvening
+      const dayEvening = '1-56';
+      await select('select#dlPeriod', [dayEvening]);
+    } else if (campus === 'malaysia') {
+      // select All Day
+      const allDay = '1-60';
+      await select('select#dlPeriod', [allDay]);
+    }
 
     // select list view
     const listView = 'TextSpreadsheet;swsurl;SWSCUST Module TextSpreadsheet';

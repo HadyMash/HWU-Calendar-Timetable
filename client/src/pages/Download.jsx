@@ -8,10 +8,7 @@ import { saveAs } from 'file-saver';
 
 export function Download() {
   const location = useLocation();
-  // TODO: rename to avoid confusion
   const { data: courses } = location.state.response;
-  const startWeek = location.state.startWeek;
-  const endWeek = location.state.endWeek;
   const alert = location.state.alert;
   const [aliasMap, setAliasMap] = useState({});
   const [showDuplicates, setShowDuplicates] = useState(false);
@@ -71,8 +68,6 @@ export function Download() {
           campus: location.state.campus,
           timetable: courses,
           aliasMap,
-          startWeek,
-          endWeek,
           alert,
         },
         {
@@ -81,11 +76,7 @@ export function Download() {
       );
 
       const blob = new Blob([response.data], { type: 'text/calendar' });
-      const semesterLabel = location.state.semesterLabel;
-      saveAs(
-        blob,
-        `HWU ${new Date().getFullYear()} ${semesterLabel} Timetable.ics`,
-      );
+      saveAs(blob, `HWU ${new Date().getFullYear()} Timetable.ics`);
 
       // if (response.status)
     } catch (error) {
@@ -96,7 +87,13 @@ export function Download() {
     }
   };
 
-  return (
+  return !courses || Object.keys(courses).length === 0 ? (
+    <div className={'download'}>
+      <div className={'center'}>
+        <h1>No events found</h1>
+      </div>
+    </div>
+  ) : (
     <div className={'download'}>
       <div className={'center'}>
         <h1>Download</h1>
