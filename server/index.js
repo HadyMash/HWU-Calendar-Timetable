@@ -91,8 +91,6 @@ app.post('/generate-ics', (req, res) => {
   }
 });
 
-// TODO: make requests which return the available courses for a given semester
-
 app.listen(port, () => {
   console.log(`Server listening on port ${port}`);
 });
