@@ -80,7 +80,6 @@ export async function getCourses(campus) {
   const page = await browser.newPage();
 
   try {
-    // TODO: refactor into a function to avoid duplication between this and getTimetable
     await navigateToCourses(page, url);
 
     // query for courses
