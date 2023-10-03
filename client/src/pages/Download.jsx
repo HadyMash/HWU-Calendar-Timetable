@@ -9,8 +9,7 @@ import { saveAs } from 'file-saver';
 export function Download() {
   const location = useLocation();
   // TODO: rename to avoid confusion
-  const serverResponse = location.state.response;
-  const courses = serverResponse.data;
+  const { data: courses } = location.state.response;
   const startWeek = location.state.startWeek;
   const endWeek = location.state.endWeek;
   const alert = location.state.alert;
@@ -67,8 +66,9 @@ export function Download() {
     setDownloading(true);
     try {
       const response = await axios.post(
-        'http://localhost:3000/generate-ics',
+        `http://localhost:3000/generate-ics`,
         {
+          campus: location.state.campus,
           timetable: courses,
           aliasMap,
           startWeek,

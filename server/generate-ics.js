@@ -1,7 +1,16 @@
 import * as ics from 'ics';
 
+const campusTimezones = {
+  dubai: 'Asia/Dubai',
+  malaysia: 'Asia/Kuala_Lumpur',
+  edinburgh: 'Europe/London',
+  orkney: 'Europe/London',
+  'scottish borders': 'Europe/London',
+};
+
 /**
  * Generates an ICS file from a timetable. The ICS file contains events for each course in the timetable and uses iCal recurrence rules to repeat events on a weekly basis excluding weeks when each course does not run.
+ * @param campus
  * @param timetable the timetable returned by /timetable
  * @param aliasMap a js object mapping course names to aliases
  * @param startWeek the week to start the timetable from (1-12)
@@ -10,12 +19,22 @@ import * as ics from 'ics';
  * @returns {string}
  */
 // TODO: implement timezones with campus locations
-export const generateICS = (timetable, aliasMap, startWeek, endWeek, alert) => {
+export const generateICS = (
+  campus,
+  timetable,
+  aliasMap,
+  startWeek,
+  endWeek,
+  alert,
+) => {
   // iCal events
   const events = [];
 
   // TODO: update to use user's timezone
-  const targetTimeZone = 'Asia/Dubai';
+  const targetTimeZone = campusTimezones[campus.toLowerCase()];
+  if (!targetTimeZone) {
+    throw new Error('Campus timezone not found');
+  }
 
   // get timezone offset in hours since the ics library adjusts the time by the timezone, so we want to undo it
   const hostTimeZoneOffsetMinutes = new Date().getTimezoneOffset() * -1;

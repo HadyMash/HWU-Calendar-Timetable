@@ -62,6 +62,11 @@ app.post('/timetable', async (req, res) => {
 
 app.post('/generate-ics', (req, res) => {
   try {
+    const campus = req.body.campus;
+    if (!campus) {
+      res.status(400).send('Campus is required');
+      return;
+    }
     const timetable = req.body.timetable;
     if (!timetable) {
       res.status(400).send('Timetable is required');
@@ -76,7 +81,14 @@ app.post('/generate-ics', (req, res) => {
     }
     const alert = req.body.alert ?? 0;
 
-    const ics = generateICS(timetable, aliasMap, startWeek, endWeek, alert);
+    const ics = generateICS(
+      campus,
+      timetable,
+      aliasMap,
+      startWeek,
+      endWeek,
+      alert,
+    );
 
     console.log('api ics', ics);
 
