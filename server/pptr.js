@@ -45,10 +45,30 @@ const browser = await puppeteer.launch({ headless: 'new' });
 //   ),
 // );
 
+async function navigateToCourses(page, url) {
+  await page.setViewport({ width: 1920, height: 1080 });
+  // Navigate to login
+  // TODO: add campus selection
+  await page.goto(url);
+
+  // login as guest
+  {
+    const guestButtonSelector = '#bGuestLogin';
+    await page.waitForSelector(guestButtonSelector);
+    await page.click(guestButtonSelector);
+  }
+
+  // go to courses
+  {
+    const coursesSelector = '#LinkBtn_modules';
+    await page.waitForSelector(coursesSelector);
+    await page.click(coursesSelector);
+  }
+}
+
 /**
  * Get a list of courses for a campus and semester
  * @param campus
- * @param semester
  * @returns {Promise} a promise that resolves to a list of courses
  */
 export async function getCourses(campus) {
@@ -61,24 +81,7 @@ export async function getCourses(campus) {
 
   try {
     // TODO: refactor into a function to avoid duplication between this and getTimetable
-    await page.setViewport({ width: 1920, height: 1080 });
-    // Navigate to login
-    // TODO: add campus selection
-    await page.goto(url);
-
-    // login as guest
-    {
-      const guestButtonSelector = '#bGuestLogin';
-      await page.waitForSelector(guestButtonSelector);
-      await page.click(guestButtonSelector);
-    }
-
-    // go to courses
-    {
-      const coursesSelector = '#LinkBtn_modules';
-      await page.waitForSelector(coursesSelector);
-      await page.click(coursesSelector);
-    }
+    await navigateToCourses(page, url);
 
     // query for courses
     const coursesSelectorQuery = 'select#dlObject';
@@ -86,7 +89,7 @@ export async function getCourses(campus) {
     const coursesSelector = await page.$(coursesSelectorQuery);
 
     // read select options and map them to return each's value and label
-    const courses = await coursesSelector.$$eval('option', (options) => {
+    return await coursesSelector.$$eval('option', (options) => {
       return options.map((option) => {
         return {
           value: option.value,
@@ -94,8 +97,6 @@ export async function getCourses(campus) {
         };
       });
     });
-
-    return courses;
   } finally {
     await page.close();
   }
@@ -267,24 +268,7 @@ export async function getTimetable(campus, courses, semester) {
 
   const page = await browser.newPage();
   try {
-    await page.setViewport({ width: 1920, height: 1080 });
-    // Navigate to login
-    // TODO: add campus selection
-    await page.goto(url);
-
-    // login as guest
-    {
-      const guestButtonSelector = '#bGuestLogin';
-      await page.waitForSelector(guestButtonSelector);
-      await page.click(guestButtonSelector);
-    }
-
-    // go to courses
-    {
-      const coursesSelector = '#LinkBtn_modules';
-      await page.waitForSelector(coursesSelector);
-      await page.click(coursesSelector);
-    }
+    await navigateToCourses(page, url);
 
     async function select(selector, values) {
       await page.waitForSelector(selector);

@@ -7,7 +7,7 @@ import * as ics from 'ics';
  * @param startWeek the week to start the timetable from (1-12)
  * @param endWeek the week to end the timetable at (1-12)
  * @param alert
- * @returns {Promise}
+ * @returns {string}
  */
 // TODO: implement timezones with campus locations
 export const generateICS = (timetable, aliasMap, startWeek, endWeek, alert) => {
@@ -72,13 +72,13 @@ export const generateICS = (timetable, aliasMap, startWeek, endWeek, alert) => {
 
           /**
            * Returns a recurrence rule for a single set of weeks
-           * @param firstInerval m-n, m-n, m
+           * @param firstInterval m-n, m-n, m
            * @param lastInterval the last interval in the set of weeks (e.g. m-n, m-n, m)
            */
-          const generateSingleRecurrence = (firstInerval, lastInterval) => {
+          const generateSingleRecurrence = (firstInterval, lastInterval) => {
             // if there is only 1 interval, return a recurrence rule for that interval
             if (!lastInterval) {
-              const arr = firstInerval.split('-');
+              const arr = firstInterval.split('-');
               if (arr.length === 1) {
                 // m case, no recurrence
                 return '';
@@ -94,7 +94,7 @@ export const generateICS = (timetable, aliasMap, startWeek, endWeek, alert) => {
               }
             } else {
               // if there is more than 1, return a recurrence from the first to the last interval
-              const firstArr = firstInerval.split('-');
+              const firstArr = firstInterval.split('-');
               const lastArr = lastInterval.split('-');
               let m = parseInt(firstArr[0]);
 
@@ -206,15 +206,15 @@ export const generateICS = (timetable, aliasMap, startWeek, endWeek, alert) => {
   }
 
   // regex to get any start/end times for the events and replace them with a time including timezone
-  const dtstartendRegex = /(DT(?:START|END)):(\d{8}T\d{6}Z)/g;
+  const dtStartEndRegex = /(DT(?:START|END)):(\d{8}T\d{6}Z)/g;
 
   function parseICSDateTime(dateTimeString) {
-    const year = parseInt(dateTimeString.substr(0, 4));
-    const month = parseInt(dateTimeString.substr(4, 2)) - 1;
-    const day = parseInt(dateTimeString.substr(6, 2));
-    const hour = parseInt(dateTimeString.substr(9, 2));
-    const minute = parseInt(dateTimeString.substr(11, 2));
-    const second = parseInt(dateTimeString.substr(13, 2));
+    const year = parseInt(dateTimeString.substring(0, 4));
+    const month = parseInt(dateTimeString.substring(4, 2)) - 1;
+    const day = parseInt(dateTimeString.substring(6, 2));
+    const hour = parseInt(dateTimeString.substring(9, 2));
+    const minute = parseInt(dateTimeString.substring(11, 2));
+    const second = parseInt(dateTimeString.substring(13, 2));
 
     const utcTime = Date.UTC(year, month, day, hour, minute, second);
     return new Date(utcTime);
@@ -231,11 +231,13 @@ export const generateICS = (timetable, aliasMap, startWeek, endWeek, alert) => {
     return `${dtType};TZID=${targetTimeZone}:${formatDate(formattedTime)}`;
   };
 
-  value = value.replace(dtstartendRegex, formatICSDT);
+  value = value.replace(dtStartEndRegex, formatICSDT);
 
   // TODO: replace PRODID
-
-  return value;
+  return value.replace(
+    /PRODID:.*/g,
+    'PRODID:-//HadyMashhour//HWUCalendarTimetable//EN',
+  );
 };
 
 function moveDateToDayOfWeek(currentDate, targetDay) {
