@@ -1,4 +1,5 @@
 import * as ics from 'ics';
+import { generateRecurrence } from './recurrence.js';
 
 const campusTimezones = {
   dubai: 'Asia/Dubai',
@@ -58,98 +59,6 @@ export const generateICS = (campus, timetable, aliasMap, alert) => {
     for (const day in days) {
       // loop through events on each day
       for (const event of days[day]) {
-        // recurrence rules function
-        /**
-         * Generates a recurrence rule for a set of weeks
-         * @param currentDate
-         * @param weeks an array of week intervals or single weeks (e.g. ['1-12'] or ['1-4', '8'] or ['1-5'. '7-12'])
-         * @returns {string}
-         */
-        function generateRecurrence(currentDate, weeks) {
-          /*
-           * cases:
-           * 1. m-n (e.g. 1-12)
-           * 2. m-n, ..., p-q (e.g. 1-5, 7-12)
-           * 3. m (e.g. 5)
-           * 4. m-m (e.g. 5-5)
-           */
-
-          /**
-           * Returns a recurrence rule for a single set of weeks
-           * @param firstInterval m-n, m-n, m
-           * @param lastInterval the last interval in the set of weeks (e.g. m-n, m-n, m)
-           */
-          const generateSingleRecurrence = (firstInterval, lastInterval) => {
-            // if there is only 1 interval, return a recurrence rule for that interval
-            if (!lastInterval) {
-              const arr = firstInterval.split('-');
-              if (arr.length === 1) {
-                // m case, no recurrence
-                return '';
-              } else {
-                // m-n or m-m case
-                const m = parseInt(arr[0]);
-                const n = parseInt(arr[1]);
-
-                const diff = n - m;
-
-                // return a recurrence rule for diff weeks
-                return `FREQ=WEEKLY;INTERVAL=1;COUNT=${diff + 1}`;
-              }
-            } else {
-              // if there is more than 1, return a recurrence from the first to the last interval
-              const firstArr = firstInterval.split('-');
-              const lastArr = lastInterval.split('-');
-              let m = parseInt(firstArr[0]);
-
-              let n = parseInt(lastArr[lastArr.length - 1]);
-
-              const diff = n - m;
-              return `FREQ=WEEKLY;INTERVAL=1;COUNT=${diff + 1}`;
-            }
-          };
-
-          const formatEXDATE = (date) => {
-            const tempDate = new Date(date);
-            tempDate.setHours(tempDate.getHours() + hostTimeZoneOffset);
-            let isoString = tempDate.toISOString();
-            isoString = isoString.replace(/[:.-]|Z/g, '');
-            // Truncate milliseconds
-            return isoString.slice(0, 15);
-          };
-
-          if (weeks.length === 1) {
-            // m-n or m-m case
-            return generateSingleRecurrence(weeks[0]);
-          } else {
-            // m-n, ..., p-q case
-            const excludedDays = [];
-            for (let i = 1; i < weeks.length; i++) {
-              const firstIntervalSplit = weeks[i - 1].split('-');
-              const firstIntervalEnd = parseInt(
-                firstIntervalSplit[firstIntervalSplit.length - 1],
-              );
-              const secondIntervalStart = parseInt(weeks[i].split('-')[0]);
-              const gap = secondIntervalStart - firstIntervalEnd - 1;
-              for (let j = firstIntervalEnd; j < gap + firstIntervalEnd; j++) {
-                const newDate = new Date(currentDate);
-                newDate.setDate(newDate.getDate() + 7 * j);
-                newDate.setHours(
-                  event.startTime.split(':')[0],
-                  event.startTime.split(':')[1],
-                );
-                // add excluded week
-                excludedDays.push(formatEXDATE(newDate));
-              }
-            }
-
-            return `${generateSingleRecurrence(
-              weeks[0],
-              weeks[weeks.length - 1],
-            )}\nEXDATE;TZID=${targetTimeZone}:${excludedDays.join(',')}`;
-          }
-        }
-
         // create a new date to change the day using day increment
         const dayMap = {
           Monday: 1,
@@ -166,7 +75,13 @@ export const generateICS = (campus, timetable, aliasMap, alert) => {
           currentDate.getDate() + 7 * (parseInt(event.weeks[0].split('-')) - 1),
         );
 
-        const rrule = generateRecurrence(currentDate, event.weeks);
+        const rrule = generateRecurrence(
+          currentDate,
+          event.weeks,
+          hostTimeZoneOffset,
+          targetTimeZone,
+          event,
+        );
 
         const iCalEvent = {
           // TODO: implement aliasMap

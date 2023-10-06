@@ -33,7 +33,6 @@ export function overlappingWeeks(list1, list2) {
 
     const x = isNaN(n) ? m : n;
     const y = isNaN(q) ? p : q;
-    const b = x < y;
     if (x < y) {
       i++;
     } else if (x > y) {
