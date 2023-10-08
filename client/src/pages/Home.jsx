@@ -15,7 +15,6 @@ export function Home() {
   const [campus, setCampus] = useState(null);
   const [coursesAbortController, setCoursesAbortController] = useState(null);
   const [courses, setCourses] = useState(null);
-  // TODO: add multiselect and implement reading each set
   const [weeks, setWeeks] = useState(null);
   const coursesRef = useRef(null);
   const weeksRef = useRef(null);
@@ -123,7 +122,6 @@ export function Home() {
         alert,
       });
       console.log(response);
-      // TODO: route to download page
       navigate('/download', {
         state: {
           response,
@@ -178,7 +176,6 @@ export function Home() {
                 <label>Courses:</label>
               </td>
               <td>
-                {/* TODO: get list of courses from server and store for a short while*/}
                 {/* TODO: add animation to multi select*/}
                 {/* TODO: don't allow selecting more than 8*/}
                 <Select
@@ -255,7 +252,6 @@ export function Home() {
             </tr>
           </tbody>
         </table>
-        {/* TODO: add alias feature */}
         <button type="submit" disabled={loadingSubmit}>
           {loadingSubmit ? (
             <PropagateLoader color={'white'} loading={true} size={5} />

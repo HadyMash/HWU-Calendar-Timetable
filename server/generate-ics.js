@@ -17,12 +17,10 @@ const campusTimezones = {
  * @param alert
  * @returns {string}
  */
-// TODO: implement timezones with campus locations
 export const generateICS = (campus, timetable, aliasMap, alert) => {
   // iCal events
   const events = [];
 
-  // TODO: update to use user's timezone
   const targetTimeZone = campusTimezones[campus.toLowerCase()];
   if (!targetTimeZone) {
     throw new Error('Campus timezone not found');
@@ -84,8 +82,7 @@ export const generateICS = (campus, timetable, aliasMap, alert) => {
         );
 
         const iCalEvent = {
-          // TODO: implement aliasMap
-          title: course,
+          title: aliasMap[course] || course,
           description: event.type,
           location: event.room,
           // TODO: fix organizer issue
@@ -151,7 +148,6 @@ export const generateICS = (campus, timetable, aliasMap, alert) => {
 
   value = value.replace(dtStartEndRegex, formatICSDT);
 
-  // TODO: replace PRODID
   return value.replace(
     /PRODID:.*/g,
     'PRODID:-//HadyMashhour//HWUCalendarTimetable//EN',

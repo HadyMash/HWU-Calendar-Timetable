@@ -58,7 +58,6 @@ export function Download() {
     return <>Not yet implemented</>;
   };
 
-  // TODO: implement
   const handleDownload = async () => {
     setDownloading(true);
     try {

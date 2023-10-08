@@ -60,7 +60,6 @@ app.post('/timetable', async (req, res) => {
   }
 });
 
-// TODO: test starting not from week 1
 app.post('/generate-ics', (req, res) => {
   try {
     const campus = req.body.campus;
