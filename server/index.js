@@ -54,12 +54,13 @@ app.post('/timetable', async (req, res) => {
     const timetable = await getTimetable(campus, courses, weeks);
     res.send(timetable);
   } catch (e) {
-    console.log(e);
+    console.error(e);
     // TODO: save error to log file
     res.status(500).send('Internal server error');
   }
 });
 
+// TODO: test starting not from week 1
 app.post('/generate-ics', (req, res) => {
   try {
     const campus = req.body.campus;
@@ -76,8 +77,6 @@ app.post('/generate-ics', (req, res) => {
     const alert = req.body.alert ?? 0;
 
     const ics = generateICS(campus, timetable, aliasMap, alert);
-
-    console.log('api ics', ics);
 
     res.setHeader('Content-Type', 'text/calendar');
     res.setHeader('Content-Disposition', 'attachment; filename=timetable.ics');

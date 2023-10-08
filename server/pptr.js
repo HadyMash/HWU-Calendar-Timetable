@@ -22,7 +22,6 @@ const campusTimetableUrls = {
 };
 
 const browser = await puppeteer.launch({ headless: 'new' });
-// const browser = await puppeteer.launch({ headless: false });
 
 // ! temp
 // const courses = [
@@ -316,11 +315,11 @@ export async function getTimetable(campus, courses, weeks) {
     const allDays = '1-7';
     await select('select#lbDays', [allDays]);
 
-    if (campus === 'dubai') {
+    if (campus.toLowerCase() === 'dubai') {
       // select DayEvening
       const dayEvening = '1-56';
       await select('select#dlPeriod', [dayEvening]);
-    } else if (campus === 'malaysia') {
+    } else if (campus.toLowerCase() === 'malaysia') {
       // select All Day
       const allDay = '1-60';
       await select('select#dlPeriod', [allDay]);

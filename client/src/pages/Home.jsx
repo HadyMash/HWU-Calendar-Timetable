@@ -47,8 +47,8 @@ export function Home() {
     }
 
     // clear courses and weeks currently selected values
-    coursesRef.current.select.clearValue();
-    weeksRef.current.select.clearValue();
+    coursesRef.current.clearValue();
+    weeksRef.current.clearValue();
 
     const abortController = new AbortController();
     setCoursesAbortController(abortController);
@@ -180,6 +180,7 @@ export function Home() {
               <td>
                 {/* TODO: get list of courses from server and store for a short while*/}
                 {/* TODO: add animation to multi select*/}
+                {/* TODO: don't allow selecting more than 8*/}
                 <Select
                   id={'courses'}
                   options={courses}
