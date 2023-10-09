@@ -20,6 +20,7 @@ const campusTimezones = {
 export const generateICS = (campus, timetable, aliasMap, alert) => {
   // iCal events
   const events = [];
+  aliasMap = aliasMap || {};
 
   const targetTimeZone = campusTimezones[campus.toLowerCase()];
   if (!targetTimeZone) {
@@ -35,6 +36,7 @@ export const generateICS = (campus, timetable, aliasMap, alert) => {
     const startDate = new Date(timetable[course].dates.start);
     const endDate = new Date(timetable[course].dates.end);
     const days = timetable[course].days;
+    const intervalStartWeek = timetable[course].dates.intervalStartWeek;
 
     // check if startDate is a Sunday
     if (startDate.getDay() !== 1) {
@@ -70,15 +72,16 @@ export const generateICS = (campus, timetable, aliasMap, alert) => {
         const currentDate = moveDateToDayOfWeek(startDate, dayMap[day]);
         // move date to the correct week
         currentDate.setDate(
-          currentDate.getDate() + 7 * (parseInt(event.weeks[0].split('-')) - 1),
+          currentDate.getDate() +
+            7 * (parseInt(event.weeks[0].split('-')[0]) - intervalStartWeek),
         );
 
         const rrule = generateRecurrence(
           currentDate,
           event.weeks,
+          event.startTime,
           hostTimeZoneOffset,
           targetTimeZone,
-          event,
         );
 
         const iCalEvent = {

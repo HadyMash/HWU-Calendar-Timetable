@@ -2,17 +2,17 @@
  * Generates a recurrence rule for a set of weeks
  * @param currentDate
  * @param weeks an array of week intervals or single weeks (e.g. ['1-12'] or ['1-4', '8'] or ['1-5'. '7-12'])
+ * @param startTime the event's start time
  * @param hostTimeZoneOffset the offset of the host timezone in hours
  * @param targetTimeZone the target timezone id
- * @param event
  * @returns {string}
  */
 export function generateRecurrence(
   currentDate,
   weeks,
+  startTime,
   hostTimeZoneOffset,
   targetTimeZone,
-  event,
 ) {
   /*
    * cases:
@@ -48,10 +48,7 @@ export function generateRecurrence(
       for (let j = firstIntervalEnd; j < gap + firstIntervalEnd; j++) {
         const newDate = new Date(currentDate);
         newDate.setDate(newDate.getDate() + 7 * (j - startingInterval));
-        newDate.setHours(
-          event.startTime.split(':')[0],
-          event.startTime.split(':')[1],
-        );
+        newDate.setHours(startTime.split(':')[0], startTime.split(':')[1]);
         // add excluded week
         excludedDays.push(formatEXDATE(newDate));
       }

@@ -268,7 +268,10 @@ export async function getTimetable(campus, courses, weeks) {
       }
 
       if (data[courseTitle]) {
-        data[courseTitle].dates = dates;
+        data[courseTitle].dates = {
+          ...dates,
+          intervalStartWeek: weekIntervals[0].split('-')[0],
+        };
       }
 
       await page.waitForSelector(tableSelector);
