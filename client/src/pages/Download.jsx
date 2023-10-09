@@ -1,18 +1,24 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Tooltip } from 'react-tooltip';
 import PropagateLoader from 'react-spinners/PropagateLoader.js';
 import { useLocation } from 'react-router-dom';
 import { toast, ToastContainer } from 'react-toastify';
+import Checkbox from '@mui/joy/Checkbox';
 import axios from 'axios';
 import { saveAs } from 'file-saver';
+import { detectDuplicates } from '../../detect-duplicates.js';
 
 export function Download() {
   const location = useLocation();
   const { data: courses } = location.state.response;
   const alert = location.state.alert;
   const [aliasMap, setAliasMap] = useState({});
-  const [showDuplicates, setShowDuplicates] = useState(false);
+  const [duplicates, setDuplicates] = useState({});
   const [downloading, setDownloading] = useState(false);
+
+  useEffect(() => {
+    setDuplicates(detectDuplicates(courses));
+  }, []);
 
   const showErrorMessage = (message) => {
     toast.error(message, {
@@ -55,7 +61,102 @@ export function Download() {
 
   // TODO: implement
   const generateDuplicateChoices = () => {
-    return <>Not yet implemented</>;
+    return Object.keys(duplicates).map((courseName) => {
+      return Object.keys(duplicates[courseName]).map((duplicateKey) => {
+        const chosenIndices =
+          duplicates[courseName][duplicateKey].chosenIndices;
+        const currDuplicates = duplicates[courseName][duplicateKey].duplicates;
+        console.log('chosenIndices', chosenIndices);
+        // TODO: implement
+        const anySelected = () => chosenIndices.length > 0;
+        const allSelected = () =>
+          chosenIndices.length === currDuplicates.length;
+        const toggleSelections = () => {
+          if (allSelected()) {
+            setDuplicates((prev) => {
+              const newDuplicates = { ...prev };
+              newDuplicates[courseName][duplicateKey].chosenIndices = [];
+              return newDuplicates;
+            });
+          } else {
+            setDuplicates((prev) => {
+              const newDuplicates = { ...prev };
+              newDuplicates[courseName][duplicateKey].chosenIndices = [
+                ...Array(currDuplicates.length).keys(),
+              ];
+              return newDuplicates;
+            });
+          }
+        };
+        const updateChosenDuplicates = (event, index) => {
+          setDuplicates((prev) => {
+            const newDuplicates = { ...prev };
+            const currChosenIndices =
+              newDuplicates[courseName][duplicateKey].chosenIndices;
+            if (event.target.checked && !currChosenIndices.includes(index)) {
+              newDuplicates[courseName][duplicateKey].chosenIndices = [
+                ...currChosenIndices,
+                index,
+              ];
+            } else if (
+              !event.target.checked &&
+              currChosenIndices.includes(index)
+            ) {
+              newDuplicates[courseName][duplicateKey].chosenIndices =
+                currChosenIndices.filter((i) => i !== index);
+            }
+            return newDuplicates;
+          });
+        };
+        return (
+          <div
+            key={`${courseName}${duplicateKey}`}
+            className={'duplicate-header'}
+          >
+            <h3>
+              {courseName} - {duplicateKey}
+            </h3>
+            <table>
+              <thead>
+                <tr>
+                  <th>
+                    <Checkbox
+                      checked={allSelected()}
+                      indeterminate={anySelected() && !allSelected()}
+                      onChange={toggleSelections}
+                    />
+                  </th>
+                  <th>Type</th>
+                  <th>Start time</th>
+                  <th>End time</th>
+                  <th>Location</th>
+                  <th>Staff</th>
+                </tr>
+              </thead>
+              <tbody>
+                {currDuplicates.map((duplicate, index) => {
+                  return (
+                    <tr key={index}>
+                      <td>
+                        <Checkbox
+                          checked={chosenIndices.includes(index)}
+                          onChange={(e) => updateChosenDuplicates(e, index)}
+                        />
+                      </td>
+                      <td>{duplicate.event.type}</td>
+                      <td>{duplicate.event.startTime}</td>
+                      <td>{duplicate.event.endTime}</td>
+                      <td>{duplicate.event.room}</td>
+                      <td>{duplicate.event.staff}</td>
+                    </tr>
+                  );
+                })}
+              </tbody>
+            </table>
+          </div>
+        );
+      });
+    });
   };
 
   const handleDownload = async () => {
@@ -104,7 +205,7 @@ export function Download() {
         </h4>
         <div className={'alias-table'}>{generateAliasRows()}</div>
       </div>
-      {showDuplicates && (
+      {Object.keys(duplicates).length > 0 && (
         <div className={'Duplicates'}>
           <h2>Duplicates</h2>
           <h4>
