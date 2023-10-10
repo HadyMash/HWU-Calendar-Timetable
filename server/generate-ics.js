@@ -170,6 +170,13 @@ export const generateICS = (campus, timetable, aliasMap, alerts) => {
     .replace(triggerRegex, 'TRIGGER:PT0M')
     .replace(triggerRegex2, 'TRIGGER-PT0M');
 
+  // regex to find any faulty alarms PT0M followed by anything (e.g. PT0M10M, PT0M9999999M, etc.)
+  // This is done because of a bug in the ics library where if an alarm is set to be after, it adds a 0M before the actual time.
+  // I created an issue you can check here: https://github.com/adamgibbons/ics/issues/253.
+  const faultyAlarmRegex = /TRIGGER:PT0M(.+?)(?=\s|$)/g;
+  value = value.replace(faultyAlarmRegex, 'TRIGGER:PT$1');
+
+  // replace PRODID with custom value
   return value.replace(
     /PRODID:.*/g,
     'PRODID:-//HadyMashhour//HWUCalendarTimetable//EN',

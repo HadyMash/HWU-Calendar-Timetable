@@ -1,6 +1,8 @@
 import { useRef, useState } from 'react';
 import axios from 'axios';
 import Select from 'react-select';
+import CreatableSelect from 'react-select/creatable';
+import makeAnimated from 'react-select/animated';
 import PropagateLoader from 'react-spinners/PropagateLoader';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
@@ -16,12 +18,29 @@ export function Home() {
   const [coursesAbortController, setCoursesAbortController] = useState(null);
   const [courses, setCourses] = useState(null);
   const [weeks, setWeeks] = useState(null);
+  const [alertOptions, setAlertOptions] = useState([
+    { value: 10, label: '10 minutes after' },
+    { value: 0, label: 'At time of event' },
+    { value: -5, label: '5 minutes before' },
+    { value: -10, label: '10 minutes before' },
+    { value: -15, label: '15 minutes before' },
+    { value: -30, label: '30 minutes before' },
+    { value: -60, label: '1 hour before' },
+    { value: -60 * 2, label: '2 hours before' },
+    { value: -60 * 3, label: '3 hours before' },
+    { value: -60 * 6, label: '6 hours before' },
+    { value: -60 * 8, label: '8 hours before' },
+    { value: -60 * 12, label: '12 hours before' },
+    { value: -60 * 24, label: '1 day before' },
+  ]);
   const coursesRef = useRef(null);
   const weeksRef = useRef(null);
   const alertRef = useRef(null);
 
   const [loadingCampusOptions, setLoadingCampusOptions] = useState(false);
   const [loadingSubmit, setLoadingSubmit] = useState(false);
+
+  const animatedComponents = makeAnimated();
 
   const showErrorMessage = (message) => {
     toast.error(message, {
@@ -141,6 +160,36 @@ export function Home() {
     }
   };
 
+  // remove non-numeric characters keeping negative and positive signs
+  const cleanAlertInput = (inputValue) =>
+    inputValue.trim().replace(/[^-0-9]/g, '');
+
+  const handleNewAlert = (inputValue) => {
+    // remove non-numeric characters
+    inputValue = cleanAlertInput(inputValue);
+    console.log(inputValue);
+    const alertNumber = parseInt(inputValue);
+    if (isNaN(alertNumber)) {
+      showErrorMessage('Please enter a valid number');
+      return;
+    }
+
+    const newAlert = {
+      value: alertNumber,
+      label: `${Math.abs(alertNumber)} minutes ${
+        alertNumber < 0 ? 'before' : 'after'
+      }`,
+    };
+    setAlertOptions((old) => {
+      if (old.find((obj) => obj.value === newAlert.value)) {
+        return old;
+      }
+      return [newAlert, ...old];
+    });
+    alertRef.current.setValue([...alertRef.current.getValue(), newAlert]);
+    return newAlert;
+  };
+
   return (
     <div className={'center'}>
       <div className={'top-text'}>
@@ -176,7 +225,6 @@ export function Home() {
                 <label>Courses:</label>
               </td>
               <td>
-                {/* TODO: add animation to multi select*/}
                 {/* TODO: don't allow selecting more than 8*/}
                 <Select
                   id={'courses'}
@@ -201,6 +249,7 @@ export function Home() {
                       : 'Select courses'
                   }
                   ref={coursesRef}
+                  components={animatedComponents}
                   isMulti
                 />
               </td>
@@ -233,6 +282,7 @@ export function Home() {
                   }
                   ref={weeksRef}
                   closeMenuOnSelect={false}
+                  components={animatedComponents}
                   isMulti
                 />
               </td>
@@ -242,26 +292,25 @@ export function Home() {
                 <label>Default alert:</label>
               </td>
               <td>
-                {/* TODO: allow creating custom times*/}
-                <Select
+                <CreatableSelect
                   id={'alert'}
                   name="alert"
                   isDisabled={loadingSubmit}
                   ref={alertRef}
-                  options={[
-                    { value: 0, label: 'At time of event' },
-                    { value: -5, label: '5 minutes before' },
-                    { value: -10, label: '10 minutes before' },
-                    { value: -15, label: '15 minutes before' },
-                    { value: -30, label: '30 minutes before' },
-                    { value: -60, label: '1 hour before' },
-                    { value: -60 * 2, label: '2 hours before' },
-                    { value: -60 * 3, label: '3 hours before' },
-                    { value: -60 * 6, label: '6 hours before' },
-                    { value: -60 * 8, label: '8 hours before' },
-                    { value: -60 * 12, label: '12 hours before' },
-                    { value: -60 * 24, label: '1 day before' },
-                  ]}
+                  options={alertOptions}
+                  formatCreateLabel={(inputValue) => {
+                    const x = parseInt(cleanAlertInput(inputValue));
+                    if (isNaN(x)) return `Invalid number: ${inputValue}`;
+                    if (x === 0) return 'At time of event';
+                    return `Custom (negative for before, positive for after): ${Math.abs(
+                      x,
+                    )} minute${x > 1 ? 's' : ''} ${x < 0 ? 'before' : 'after'}`;
+                  }}
+                  onCreateOption={handleNewAlert}
+                  isValidNewOption={(inputValue) =>
+                    !isNaN(parseInt(cleanAlertInput(inputValue)))
+                  }
+                  components={animatedComponents}
                   isMulti
                 />
               </td>
