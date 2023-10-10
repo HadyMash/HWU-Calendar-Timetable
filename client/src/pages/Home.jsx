@@ -319,7 +319,7 @@ export function Home() {
             </tr>
           </tbody>
         </table>
-        <button type="submit" disabled={loadingSubmit}>
+        <button className={'my-button'} type="submit" disabled={loadingSubmit}>
           {loadingSubmit ? (
             <PropagateLoader color={'white'} loading={true} size={5} />
           ) : (

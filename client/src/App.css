@@ -32,8 +32,7 @@ table td:has(div) {
     max-width: 750px;
 }
 
-/* TODO: fix css affecting react toastify x button*/
-button {
+.my-button {
     margin-top: 20px;
     height: 42px;
     border-radius: 5px;
@@ -47,11 +46,11 @@ button {
     transition: background-color 0.2s ease;
 }
 
-button:hover {
+.my-button:hover {
     background-color: #45a049;
 }
 
-button:disabled {
+.my-button:disabled {
     background-color: #8bc58e;
     cursor: not-allowed;
 }

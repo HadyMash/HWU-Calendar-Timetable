@@ -244,7 +244,11 @@ export function Download() {
         </div>
       )}
       <div className={'center'} style={{ marginTop: '20px' }}>
-        <button onClick={handleDownload} disabled={downloading}>
+        <button
+          className={'my-button'}
+          onClick={handleDownload}
+          disabled={downloading}
+        >
           {downloading ? (
             <PropagateLoader color={'white'} loading={true} size={5} />
           ) : (
