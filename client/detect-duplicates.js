@@ -35,6 +35,7 @@ export function detectDuplicates(courses) {
                 event: event1,
               });
             }
+            break;
           }
         }
       }
@@ -44,7 +45,7 @@ export function detectDuplicates(courses) {
   return duplicates;
 }
 
-function isDuplicateEvent(event1, event2) {
+export function isDuplicateEvent(event1, event2) {
   if (event1 === event2) {
     return false;
   }
@@ -56,7 +57,7 @@ function isDuplicateEvent(event1, event2) {
   );
 }
 
-function arraysAreEqual(arr1, arr2) {
+export function arraysAreEqual(arr1, arr2) {
   if (arr1.length !== arr2.length) {
     return false;
   }

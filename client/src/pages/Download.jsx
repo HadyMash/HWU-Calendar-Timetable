@@ -6,7 +6,11 @@ import { toast, ToastContainer } from 'react-toastify';
 import Checkbox from '@mui/joy/Checkbox';
 import axios from 'axios';
 import { saveAs } from 'file-saver';
-import { detectDuplicates } from '../../detect-duplicates.js';
+import {
+  arraysAreEqual,
+  detectDuplicates,
+  isDuplicateEvent,
+} from '../../detect-duplicates.js';
 
 export function Download() {
   const location = useLocation();
@@ -66,7 +70,6 @@ export function Download() {
         const chosenIndices =
           duplicates[courseName][duplicateKey].chosenIndices;
         const currDuplicates = duplicates[courseName][duplicateKey].duplicates;
-        console.log('chosenIndices', chosenIndices);
         // TODO: implement
         const anySelected = () => chosenIndices.length > 0;
         const allSelected = () =>
@@ -162,11 +165,42 @@ export function Download() {
   const handleDownload = async () => {
     setDownloading(true);
     try {
+      const coursesClone = JSON.parse(JSON.stringify(courses));
+      for (const courseKey in duplicates) {
+        console.log('courseKey', courseKey);
+        const course = duplicates[courseKey];
+        for (const duplicateKey in course) {
+          const duplicateInstance = course[duplicateKey];
+          const day = duplicateInstance.duplicates[0].day;
+          const chosenIndices = duplicateInstance.chosenIndices;
+
+          console.log('duplicateInstance in loop', duplicateInstance);
+
+          const filter = (val) => {
+            for (const index of chosenIndices) {
+              const event = duplicateInstance.duplicates[index].event;
+              if (!isDuplicateEvent(val, event)) {
+                return true;
+              } else {
+                if (val.room === event.room) {
+                  return true;
+                }
+              }
+            }
+            return false;
+          };
+
+          coursesClone[courseKey].days[day] =
+            coursesClone[courseKey].days[day].filter(filter);
+        }
+      }
+      console.log('coursesClone', coursesClone);
+
       const response = await axios.post(
         `http://localhost:3000/generate-ics`,
         {
           campus: location.state.campus,
-          timetable: courses,
+          timetable: coursesClone,
           aliasMap,
           alert,
         },
@@ -199,7 +233,7 @@ export function Download() {
         <h1>Download</h1>
       </div>
       <div className={'alias'}>
-        <h2>Alias</h2>
+        <h2>Aliases</h2>
         <h4>
           Rename any course, it will be used for event titles on the calendar
         </h4>
