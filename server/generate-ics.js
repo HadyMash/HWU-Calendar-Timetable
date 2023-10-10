@@ -14,10 +14,10 @@ const campusTimezones = {
  * @param campus
  * @param timetable the timetable returned by /timetable
  * @param aliasMap a js object mapping course names to aliases
- * @param alert
+ * @param alerts ics alarms
  * @returns {string}
  */
-export const generateICS = (campus, timetable, aliasMap, alert) => {
+export const generateICS = (campus, timetable, aliasMap, alerts) => {
   // iCal events
   const events = [];
   aliasMap = aliasMap || {};
@@ -109,8 +109,18 @@ export const generateICS = (campus, timetable, aliasMap, alert) => {
           ],
           recurrenceRule: rrule,
           busyStatus: 'BUSY',
-          // TODO: implement alert
         };
+
+        if (alerts && alerts.length > 0) {
+          iCalEvent.alarms = alerts.map((value) => {
+            return {
+              action: 'display',
+              description: 'Reminder',
+              trigger: alertTrigger(value),
+            };
+          });
+        }
+
         events.push(iCalEvent);
       }
     }
@@ -151,6 +161,15 @@ export const generateICS = (campus, timetable, aliasMap, alert) => {
 
   value = value.replace(dtStartEndRegex, formatICSDT);
 
+  // regex to find any TRIGGER:PT without pt value
+  const triggerRegex = /TRIGGER:PT/g;
+  // regex to find any TRIGGER-PT without pt value
+  const triggerRegex2 = /TRIGGER-PT/g;
+
+  value = value
+    .replace(triggerRegex, 'TRIGGER:PT0M')
+    .replace(triggerRegex2, 'TRIGGER-PT0M');
+
   return value.replace(
     /PRODID:.*/g,
     'PRODID:-//HadyMashhour//HWUCalendarTimetable//EN',
@@ -163,6 +182,21 @@ function moveDateToDayOfWeek(currentDate, targetDay) {
   const newDate = new Date(currentDate);
   newDate.setDate(newDate.getDate() + daysToAdd);
   return newDate;
+}
+
+function alertTrigger(value) {
+  value = Math.round(value);
+  if (value === 0) {
+    return {};
+  }
+
+  const before = value < 0;
+  value = Math.abs(value);
+
+  const hours = Math.floor(value / 60);
+  const minutes = value % 60;
+
+  return { hours, minutes, before };
 }
 
 //

@@ -73,9 +73,9 @@ app.post('/generate-ics', (req, res) => {
       return;
     }
     const aliasMap = req.body.aliasMap;
-    const alert = req.body.alert ?? 0;
+    const alerts = req.body.alerts;
 
-    const ics = generateICS(campus, timetable, aliasMap, alert);
+    const ics = generateICS(campus, timetable, aliasMap, alerts);
 
     res.setHeader('Content-Type', 'text/calendar');
     res.setHeader('Content-Disposition', 'attachment; filename=timetable.ics');

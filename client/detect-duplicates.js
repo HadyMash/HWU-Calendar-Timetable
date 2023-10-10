@@ -57,7 +57,7 @@ export function isDuplicateEvent(event1, event2) {
   );
 }
 
-export function arraysAreEqual(arr1, arr2) {
+function arraysAreEqual(arr1, arr2) {
   if (arr1.length !== arr2.length) {
     return false;
   }
@@ -70,60 +70,3 @@ export function arraysAreEqual(arr1, arr2) {
 
   return true;
 }
-
-// // ! temp
-// const courses = {
-//   'User-Centred Experimental Design': {
-//     days: {
-//       Monday: [
-//         {
-//           type: 'Lec',
-//           startTime: '13:00',
-//           endTime: '15:00',
-//           weeks: ['1-5', '7-12'],
-//           room: '5.12',
-//           staff: 'Uddin, Md Azher;  Dr. R. Soobhany',
-//         },
-//         {
-//           type: 'CLab',
-//           startTime: '15:00',
-//           endTime: '17:00',
-//           weeks: ['1-5', '7-12'],
-//           room: '5.32',
-//           staff: 'Uddin, Md Azher;  Dr. R. Soobhany',
-//         },
-//         {
-//           type: 'CLab',
-//           startTime: '15:00',
-//           endTime: '17:00',
-//           weeks: ['1-5', '7-12'],
-//           room: '5.35A',
-//           staff: 'Uddin, Md Azher;  Dr. R. Soobhany',
-//         },
-//         {
-//           type: 'CLab',
-//           startTime: '15:00',
-//           endTime: '17:00',
-//           weeks: ['1-5', '7-12'],
-//           room: '5.35C',
-//           staff: 'Uddin, Md Azher;  Dr. R. Soobhany',
-//         },
-//         {
-//           type: 'CLab',
-//           startTime: '15:00',
-//           endTime: '17:00',
-//           weeks: ['1-5', '7-12'],
-//           room: '5.35B',
-//           staff: 'Uddin, Md Azher;  Dr. R. Soobhany',
-//         },
-//       ],
-//     },
-//     dates: {
-//       start: '11 Sep 2023',
-//       end: '3 Dec 2023',
-//       intervalStartWeek: '1',
-//     },
-//   },
-// };
-//
-// console.log(detectDuplicates(courses));

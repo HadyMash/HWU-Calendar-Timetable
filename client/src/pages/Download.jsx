@@ -6,16 +6,12 @@ import { toast, ToastContainer } from 'react-toastify';
 import Checkbox from '@mui/joy/Checkbox';
 import axios from 'axios';
 import { saveAs } from 'file-saver';
-import {
-  arraysAreEqual,
-  detectDuplicates,
-  isDuplicateEvent,
-} from '../../detect-duplicates.js';
+import { detectDuplicates, isDuplicateEvent } from '../../detect-duplicates.js';
 
 export function Download() {
   const location = useLocation();
   const { data: courses } = location.state.response;
-  const alert = location.state.alert;
+  const alerts = location.state.alerts;
   const [aliasMap, setAliasMap] = useState({});
   const [duplicates, setDuplicates] = useState({});
   const [downloading, setDownloading] = useState(false);
@@ -63,14 +59,12 @@ export function Download() {
     return aliasRows;
   };
 
-  // TODO: implement
   const generateDuplicateChoices = () => {
     return Object.keys(duplicates).map((courseName) => {
       return Object.keys(duplicates[courseName]).map((duplicateKey) => {
         const chosenIndices =
           duplicates[courseName][duplicateKey].chosenIndices;
         const currDuplicates = duplicates[courseName][duplicateKey].duplicates;
-        // TODO: implement
         const anySelected = () => chosenIndices.length > 0;
         const allSelected = () =>
           chosenIndices.length === currDuplicates.length;
@@ -202,7 +196,7 @@ export function Download() {
           campus: location.state.campus,
           timetable: coursesClone,
           aliasMap,
-          alert,
+          alerts,
         },
         {
           responseType: 'blob',

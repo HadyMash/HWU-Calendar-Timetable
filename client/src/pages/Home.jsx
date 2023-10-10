@@ -92,7 +92,7 @@ export function Home() {
 
     const courses = getSelectedValues(coursesRef);
     const weeks = getSelectedValues(weeksRef);
-    const alert = getSelectedValues(alertRef)[0];
+    const alerts = getSelectedValues(alertRef);
 
     // validate
     let valid = true;
@@ -119,14 +119,14 @@ export function Home() {
         campus,
         courses,
         weeks,
-        alert,
+        alerts,
       });
       console.log(response);
       navigate('/download', {
         state: {
           response,
           campus,
-          alert,
+          alerts,
         },
       });
     } catch (error) {
@@ -242,11 +242,27 @@ export function Home() {
                 <label>Default alert:</label>
               </td>
               <td>
+                {/* TODO: allow creating custom times*/}
                 <Select
                   id={'alert'}
                   name="alert"
                   isDisabled={loadingSubmit}
                   ref={alertRef}
+                  options={[
+                    { value: 0, label: 'At time of event' },
+                    { value: -5, label: '5 minutes before' },
+                    { value: -10, label: '10 minutes before' },
+                    { value: -15, label: '15 minutes before' },
+                    { value: -30, label: '30 minutes before' },
+                    { value: -60, label: '1 hour before' },
+                    { value: -60 * 2, label: '2 hours before' },
+                    { value: -60 * 3, label: '3 hours before' },
+                    { value: -60 * 6, label: '6 hours before' },
+                    { value: -60 * 8, label: '8 hours before' },
+                    { value: -60 * 12, label: '12 hours before' },
+                    { value: -60 * 24, label: '1 day before' },
+                  ]}
+                  isMulti
                 />
               </td>
             </tr>
