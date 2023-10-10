@@ -225,7 +225,6 @@ export function Home() {
                 <label>Courses:</label>
               </td>
               <td>
-                {/* TODO: don't allow selecting more than 8*/}
                 <Select
                   id={'courses'}
                   options={courses}
@@ -250,6 +249,9 @@ export function Home() {
                   }
                   ref={coursesRef}
                   components={animatedComponents}
+                  isOptionDisabled={(_) =>
+                    coursesRef.current.getValue().length >= 8
+                  }
                   isMulti
                 />
               </td>
