@@ -87,3 +87,34 @@ table td:has(div) {
     border-radius: 6px;
     border: 1px solid grey;
 }
+
+footer {
+    box-sizing: border-box;
+    position: absolute;
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    align-content: center;
+    bottom: 0;
+    margin: 0;
+    margin-top: 40px;
+    padding: 20px;
+    background-color: #363636;
+    color: white;
+    text-align: center;
+    width: 100%;
+}
+
+footer div {
+    max-width: 1500px;
+    text-align: center;
+}
+
+footer a {
+    color: #6fc2ff;
+}
+
+footer a:hover {
+    color: #40a0ff;;
+}

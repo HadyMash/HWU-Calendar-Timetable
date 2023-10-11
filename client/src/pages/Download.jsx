@@ -176,7 +176,7 @@ export function Download() {
               if (!isDuplicateEvent(val, event)) {
                 return true;
               } else {
-                if (val.room === event.room) {
+                if (val.room === event.room && val.staff === event.staff) {
                   return true;
                 }
               }
