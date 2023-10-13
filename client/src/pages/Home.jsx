@@ -7,6 +7,7 @@ import PropagateLoader from 'react-spinners/PropagateLoader';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { useNavigate } from 'react-router-dom';
+import { host } from '../../api.js';
 
 export function Home() {
   /* Things to implement
@@ -74,12 +75,9 @@ export function Home() {
     let cancelled = false;
 
     try {
-      const response = await axios.get(
-        `http://localhost:3000/${e.value}/options`,
-        {
-          signal: abortController.signal,
-        },
-      );
+      const response = await axios.get(`${host}/${e.value}/options`, {
+        signal: abortController.signal,
+      });
 
       if (response.status === 200) {
         console.log(response.data);
@@ -134,7 +132,7 @@ export function Home() {
     // make call to api
     setLoadingSubmit(true);
     try {
-      const response = await axios.post('http://localhost:3000/timetable', {
+      const response = await axios.post(`${host}/timetable`, {
         campus,
         courses,
         weeks,

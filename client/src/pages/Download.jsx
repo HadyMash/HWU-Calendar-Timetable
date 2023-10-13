@@ -7,6 +7,7 @@ import Checkbox from '@mui/joy/Checkbox';
 import axios from 'axios';
 import { saveAs } from 'file-saver';
 import { detectDuplicates, isDuplicateEvent } from '../../detect-duplicates.js';
+import { host } from '../../api.js';
 
 export function Download() {
   const location = useLocation();
@@ -191,7 +192,7 @@ export function Download() {
       console.log('coursesClone', coursesClone);
 
       const response = await axios.post(
-        `http://localhost:3000/generate-ics`,
+        `${host}/generate-ics`,
         {
           campus: location.state.campus,
           timetable: coursesClone,
