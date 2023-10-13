@@ -4,9 +4,20 @@ import { getCampusOptions, getTimetable } from './pptr.js';
 import { generateICS } from './generate-ics.js';
 
 const api = express();
-
 api.use(express.json());
-api.use(cors());
+
+const allowedOrigins = ['https://hadymash.github.io/HWU-Calendar-Timetable/'];
+const corsOptions = {
+  origin: function (origin, callback) {
+    if (allowedOrigins.indexOf(origin) !== -1 || !origin) {
+      callback(null, true);
+    } else {
+      callback(new Error('Not allowed by CORS'));
+    }
+  },
+};
+
+api.use(cors(corsOptions));
 
 const campuses = [
   'dubai',
