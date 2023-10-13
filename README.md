@@ -9,6 +9,8 @@ You can try it out here: https://hadymash.github.io/HWU-Calendar-Timetable/
 
 # Known Issues
 
+* Weeks can sometimes be labelled incorrectly. For example, week 1 is labelled as week 2 (as of 13/10/2023). This is how
+  it's labelled on the uni's website and I can't do anything about it.
 * It's slow. A request usually takes 10-20 seconds. This is because there isn't enough traffic so the server goes to
   sleep and requires a few seconds to wake up.
 * Sometimes, not all the course options are scraped by the server, if you don't find your course try refreshing.
