@@ -9,6 +9,8 @@ const port = 3000;
 app.use(express.json());
 app.use(cors());
 
+app.get('/health', (req, res) => res.send('OK'));
+
 // TODO: implement caching courses
 app.get('/:campus/options', async (req, res) => {
   try {
