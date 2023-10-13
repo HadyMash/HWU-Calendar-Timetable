@@ -1,0 +1,120 @@
+.center {
+    display: flex;
+    flex-direction: column;
+    align-content: center;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+}
+
+.top-text {
+    margin-bottom: 20px;
+}
+
+form {
+    display: flex;
+    width: 100%;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+table {
+    border-spacing: 15px;
+}
+
+table td {
+    text-align: start;
+}
+
+table td:has(div) {
+    width: 85%;
+    max-width: 750px;
+}
+
+.my-button {
+    margin-top: 20px;
+    height: 42px;
+    border-radius: 5px;
+    border: none;
+    background-color: #4CAF50;
+    color: white;
+    font-size: 16px;
+    font-weight: 600;
+    width: 200px;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+}
+
+.my-button:hover {
+    background-color: #45a049;
+}
+
+.my-button:disabled {
+    background-color: #8bc58e;
+    cursor: not-allowed;
+}
+
+.download {
+    padding: 0 3.5%;
+}
+
+.download .center h1 {
+    margin-bottom: 10px;
+}
+
+.alias-table {
+    display: grid;
+    width: 100%;
+    grid-template-columns: 30% 1fr;
+    grid-row-gap: 12px;
+    grid-column-gap: 10px
+}
+
+.alias-table label {
+    box-sizing: border-box;
+    width: 100%;
+    text-overflow: ellipsis;
+    overflow: hidden;
+    white-space: nowrap;
+}
+
+.alias-table input {
+    font-size: 16px;
+    box-sizing: border-box;
+    width: 100%;
+    padding: 5px 12px;
+    border-radius: 6px;
+    border: 1px solid grey;
+}
+
+footer {
+    box-sizing: border-box;
+    position: absolute;
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    align-content: center;
+    bottom: 0;
+    margin: 0;
+    margin-top: 40px;
+    padding: 20px;
+    background-color: #363636;
+    color: white;
+    text-align: center;
+    width: 100%;
+}
+
+footer div {
+    max-width: 1500px;
+    text-align: center;
+}
+
+footer a {
+    color: #6fc2ff;
+}
+
+footer a:hover {
+    color: #40a0ff;;
+}
