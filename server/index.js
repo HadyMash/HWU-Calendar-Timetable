@@ -8,6 +8,14 @@ const api = express();
 api.use(express.json());
 api.use(cors());
 
+const campuses = [
+  'dubai',
+  'malaysia',
+  'edinburgh',
+  'orkney',
+  'scottish borders',
+];
+
 api.get('/health', (req, res) => res.send('OK'));
 
 // TODO: implement caching courses
@@ -18,8 +26,12 @@ api.get('/:campus/options', async (req, res) => {
       res.status(400).send('Campus is required');
       return;
     }
+    if (!campuses.includes(campus.trim().toLowerCase())) {
+      res.status(400).send('Invalid campus');
+      return;
+    }
 
-    const courses = await getCampusOptions(campus);
+    const courses = await getCampusOptions(campus.trim().toLowerCase());
     res.send(courses);
   } catch (e) {
     console.error(e);
@@ -32,6 +44,10 @@ api.post('/timetable', async (req, res) => {
     const campus = req.body.campus;
     if (!campus) {
       res.status(400).send('Campus is required');
+      return;
+    }
+    if (!campuses.includes(campus.trim().toLowerCase())) {
+      res.status(400).send('Invalid campus');
       return;
     }
 
@@ -52,7 +68,11 @@ api.post('/timetable', async (req, res) => {
       return;
     }
 
-    const timetable = await getTimetable(campus, courses, weeks);
+    const timetable = await getTimetable(
+      campus.trim().toLowerCase(),
+      courses,
+      weeks,
+    );
     res.send(timetable);
   } catch (e) {
     console.error(e);
