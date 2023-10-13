@@ -35,17 +35,19 @@ jobs:
         with:
           node-version: 18
           cache: 'npm'
+      - name: Go to client directory
+      - run: cd client
       - name: Install dependencies
-        run: npm --prefix client install
+        run: npm client install
       - name: Build
-        run: npm --prefix client run build
+        run: npm client run build
       - name: Setup Pages
         uses: actions/configure-pages@v3
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v1
         with:
           # Upload dist repository
-          path: './client/dist'
+          path: './dist'
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v1
