@@ -6,7 +6,7 @@ import { generateICS } from './generate-ics.js';
 const api = express();
 api.use(express.json());
 
-const allowedOrigins = ['https://hadymash.github.io/HWU-Calendar-Timetable/'];
+const allowedOrigins = ['https://hadymash.github.io'];
 const corsOptions = {
   origin: function (origin, callback) {
     if (allowedOrigins.indexOf(origin) !== -1 || !origin) {
