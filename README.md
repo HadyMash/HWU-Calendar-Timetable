@@ -1,6 +1,6 @@
-# Heriot Watt University Calendar Timetable
+# Heriot-Watt University Calendar Timetable
 
-***NOTE:*** **This project is in no way affiliated with Heriot Watt University or Google**
+***NOTE:*** **This project is in no way affiliated with Heriot-Watt University or Google**
 
 # Known Issues
 

@@ -23,28 +23,6 @@ const campusTimetableUrls = {
 
 const browser = await puppeteer.launch({ headless: 'new' });
 
-// ! temp
-// const courses = [
-//   'B17CA-S1',
-//   'B18AP-S1',
-//   'B27MW-S1',
-//   'B30EI-S1',
-//   'B30UB-S1',
-//   'F28ED-S1',
-// ];
-// const courses = ['B17CA-S1', 'B18AP-S1'];
-// const courses = ['F28ED-S1'];
-// const weeks = ['2;3;4;5;6;7;8;9;10;11;12;13'];
-
-// console.log(
-//   util.inspect(
-//     await getTimetable(courses, weeks),
-//     false,
-//     null,
-//     true /* enable colors */,
-//   ),
-// );
-
 async function navigateToCourses(page, url) {
   await page.setViewport({ width: 1920, height: 1080 });
   // Navigate to login

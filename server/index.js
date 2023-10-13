@@ -3,16 +3,15 @@ import cors from 'cors';
 import { getCampusOptions, getTimetable } from './pptr.js';
 import { generateICS } from './generate-ics.js';
 
-const app = express();
-const port = 3000;
+const api = express();
 
-app.use(express.json());
-app.use(cors());
+api.use(express.json());
+api.use(cors());
 
-app.get('/health', (req, res) => res.send('OK'));
+api.get('/health', (req, res) => res.send('OK'));
 
 // TODO: implement caching courses
-app.get('/:campus/options', async (req, res) => {
+api.get('/:campus/options', async (req, res) => {
   try {
     const campus = req.params.campus;
     if (!campus) {
@@ -28,7 +27,7 @@ app.get('/:campus/options', async (req, res) => {
   }
 });
 
-app.post('/timetable', async (req, res) => {
+api.post('/timetable', async (req, res) => {
   try {
     const campus = req.body.campus;
     if (!campus) {
@@ -62,7 +61,7 @@ app.post('/timetable', async (req, res) => {
   }
 });
 
-app.post('/generate-ics', (req, res) => {
+api.post('/generate-ics', (req, res) => {
   try {
     const campus = req.body.campus;
     if (!campus) {
@@ -90,6 +89,4 @@ app.post('/generate-ics', (req, res) => {
   }
 });
 
-app.listen(port, () => {
-  console.log(`Server listening on port ${port}`);
-});
+export const app = api;

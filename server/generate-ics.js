@@ -205,38 +205,3 @@ function alertTrigger(value) {
 
   return { hours, minutes, before };
 }
-
-//
-// // ! temp
-// const timetable = {
-//   'Principles of Chemistry': {
-//     days: {
-//       Wednesday: [
-//         {
-//           type: 'Lec',
-//           startTime: '13:00',
-//           endTime: '15:00',
-//           weeks: '1-12',
-//           room: '2.03',
-//           staff: 'M. Nair',
-//         },
-//       ],
-//       Thursday: [
-//         {
-//           type: 'Tut',
-//           startTime: '13:00',
-//           endTime: '15:00',
-//           weeks: '1-4, 7-12',
-//           room: '2.03',
-//           staff: 'M. Nair',
-//         },
-//       ],
-//     },
-//     dates: {
-//       start: '11 Sep 2023',
-//       end: '3 Dec 2023',
-//     },
-//   },
-// };
-//
-// generateICS(timetable, {}, 1, 12, 0);

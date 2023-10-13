@@ -249,7 +249,7 @@ export function Home() {
                   }
                   ref={coursesRef}
                   components={animatedComponents}
-                  isOptionDisabled={(_) =>
+                  isOptionDisabled={() =>
                     coursesRef.current.getValue().length >= 8
                   }
                   isMulti
