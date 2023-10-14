@@ -1,4 +1,4 @@
-import { useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import axios from 'axios';
 import Select from 'react-select';
 import CreatableSelect from 'react-select/creatable';
@@ -55,6 +55,25 @@ export function Home() {
       theme: 'light',
     });
   };
+
+  useEffect(() => {
+    // check if server is online
+    axios
+      .get(`${host}/health`)
+      .then((response) => {
+        // if status is not 200 or response is not ok show error message
+        console.log(response);
+        if (response.status !== 200 || !response.data === 'OK') {
+          console.log(response.status);
+          console.log(response.data);
+          showErrorMessage(`Error connecting to server, it may be offline.`);
+        }
+      })
+      .catch((e) => {
+        console.error(e);
+        showErrorMessage(`Error connecting to server, it may be offline.`);
+      });
+  }, []);
 
   const handleCampusChange = async (e) => {
     setCampus(e.value);
