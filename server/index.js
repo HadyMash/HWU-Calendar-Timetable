@@ -6,18 +6,11 @@ import { generateICS } from './generate-ics.js';
 const api = express();
 api.use(express.json());
 
-const allowedOrigins = ['https://hadymash.github.io'];
-const corsOptions = {
-  origin: function (origin, callback) {
-    if (allowedOrigins.indexOf(origin) !== -1 || !origin) {
-      callback(null, true);
-    } else {
-      callback(new Error('Not allowed by CORS'));
-    }
-  },
-};
-
-api.use(cors(corsOptions));
+api.use(
+  cors({
+    origin: 'https://hadymash.github.io',
+  }),
+);
 
 const campuses = [
   'dubai',
@@ -29,7 +22,6 @@ const campuses = [
 
 api.get('/health', (req, res) => res.send('OK'));
 
-// TODO: implement caching courses
 api.get('/:campus/options', async (req, res) => {
   try {
     const campus = req.params.campus;
@@ -87,7 +79,6 @@ api.post('/timetable', async (req, res) => {
     res.send(timetable);
   } catch (e) {
     console.error(e);
-    // TODO: save error to log file
     res.status(500).send('Internal server error');
   }
 });
@@ -115,7 +106,6 @@ api.post('/generate-ics', (req, res) => {
     res.send(ics);
   } catch (e) {
     console.error(e);
-    // TODO: save error to log file
     res.status(500).send('Internal server error');
   }
 });
