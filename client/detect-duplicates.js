@@ -53,7 +53,6 @@ export function isDuplicateEvent(event1, event2) {
     return false;
   }
   return (
-    event1.type === event2.type &&
     event1.startTime === event2.startTime &&
     event1.endTime === event2.endTime &&
     arraysAreEqual(event1.weeks, event2.weeks)
