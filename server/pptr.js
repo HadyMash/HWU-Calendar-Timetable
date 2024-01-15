@@ -39,55 +39,241 @@ async function navigateToCourses(page, url) {
   {
     const coursesSelector = '#LinkBtn_modules';
     await page.waitForSelector(coursesSelector);
-    await page.click(coursesSelector);
+    await Promise.all([page.click(coursesSelector), page.waitForNavigation()]);
+  }
+}
+
+async function navigateToPrograms(page, url) {
+  await page.setViewport({ width: 1920, height: 1080 });
+  // Navigate to login
+
+  await page.goto(url);
+
+  // login as guest
+  {
+    const guestButtonSelector = '#bGuestLogin';
+    await page.waitForSelector(guestButtonSelector);
+    await page.click(guestButtonSelector);
+  }
+
+  // go to courses
+  {
+    const programsSelector = '#LinkBtn_studentsets';
+    await page.waitForSelector(programsSelector);
+    await Promise.all([page.click(programsSelector), page.waitForNavigation()]);
   }
 }
 
 /**
- * Get a list of courses for a campus and weeks
+ * Get a list of courses and programs for a campus and weeks
  * @param campus
- * @returns {Promise} a promise that resolves to a list of courses
+ * @returns {Promise} a promise that resolves to campus courses, programs, and weeks
  */
 export async function getCampusOptions(campus) {
-  const url = campusTimetableUrls[campus.toLowerCase()];
-  if (!url) {
-    throw new Error(`Campus ${campus} not found`);
-  }
+  const result = {};
+  const getPrograms = async () => {
+    const url = campusTimetableUrls[campus.toLowerCase()];
+    if (!url) {
+      throw new Error(`Campus ${campus} not found`);
+    }
 
+    const page = await browser.newPage();
+
+    try {
+      await Promise.all([
+        navigateToPrograms(page, url),
+        page.waitForNavigation(),
+      ]);
+
+      const programsSelectorQuery = 'select#dlObject';
+      await page.waitForSelector(programsSelectorQuery);
+      const programsSelector = await page.$(programsSelectorQuery);
+
+      // read program options
+      const programs = await programsSelector.$$eval('option', (options) => {
+        return options.map((option) => {
+          return {
+            value: option.value,
+            label: option.textContent.trim().replace('  ', ' '),
+          };
+        });
+      });
+
+      result['programs'] = programs;
+    } finally {
+      await page.close();
+    }
+  };
+  const getCourseOptions = async () => {
+    const url = campusTimetableUrls[campus.toLowerCase()];
+    if (!url) {
+      throw new Error(`Campus ${campus} not found`);
+    }
+
+    const page = await browser.newPage();
+
+    try {
+      await Promise.all([
+        navigateToCourses(page, url),
+        page.waitForNavigation(),
+      ]);
+
+      // query for courses
+      const coursesSelectorQuery = 'select#dlObject';
+      await page.waitForSelector(coursesSelectorQuery);
+      const coursesSelector = await page.$(coursesSelectorQuery);
+
+      // read select options and map them to return each's value and label
+      const courses = await coursesSelector.$$eval('option', (options) => {
+        return options.map((option) => {
+          return {
+            value: option.value,
+            label: option.textContent.trim().replace('  ', ' '),
+          };
+        });
+      });
+
+      const weeksSelectorQuery = 'select#lbWeeks';
+      await page.waitForSelector(weeksSelectorQuery);
+      const weeksSelector = await page.$(weeksSelectorQuery);
+
+      const weeks = await weeksSelector.$$eval('option', (options) => {
+        return options.map((option) => {
+          return {
+            value: option.value,
+            label: option.textContent.trim().replace('  ', ' '),
+          };
+        });
+      });
+
+      result['courses'] = courses;
+      result['weeks'] = weeks;
+    } finally {
+      await page.close();
+    }
+  };
+
+  await Promise.all([getPrograms(), getCourseOptions()]);
+  return result;
+}
+
+export async function getProgramsCourses(campus, programs) {
   const page = await browser.newPage();
 
   try {
-    await navigateToCourses(page, url);
+    await Promise.all([
+      navigateToPrograms(page, campusTimetableUrls[campus.toLowerCase()]),
+      page.waitForNavigation(),
+    ]);
 
-    // query for courses
-    const coursesSelectorQuery = 'select#dlObject';
-    await page.waitForSelector(coursesSelectorQuery);
-    const coursesSelector = await page.$(coursesSelectorQuery);
+    async function select(selector, values) {
+      await page.waitForSelector(selector);
+      const select = await page.$(selector);
+      await select.select(...values);
+    }
 
-    // read select options and map them to return each's value and label
-    const courses = await coursesSelector.$$eval('option', (options) => {
-      return options.map((option) => {
-        return {
-          value: option.value,
-          label: option.textContent.trim().replace('  ', ' '),
-        };
-      });
-    });
-
+    // select all possible week options
     const weeksSelectorQuery = 'select#lbWeeks';
     await page.waitForSelector(weeksSelectorQuery);
     const weeksSelector = await page.$(weeksSelectorQuery);
-
     const weeks = await weeksSelector.$$eval('option', (options) => {
       return options.map((option) => {
-        return {
-          value: option.value,
-          label: option.textContent.trim().replace('  ', ' '),
-        };
+        return option.value;
       });
     });
+    await select('select#lbWeeks', weeks);
 
-    return { courses, weeks };
+    // select all days
+    const allDays = '1-7';
+    await select('select#lbDays', [allDays]);
+
+    if (campus.toLowerCase() === 'dubai') {
+      // select DayEvening
+      const dayEvening = '1-56';
+      await select('select#dlPeriod', [dayEvening]);
+    } else if (campus.toLowerCase() === 'malaysia') {
+      // select All Day
+      const allDay = '1-60';
+      await select('select#dlPeriod', [allDay]);
+    }
+
+    // select list view
+    const listView =
+      'TextSpreadsheet;swsurl;SWSCUST Student Set TextSpreadsheet';
+    await select('select#dlType', [listView]);
+
+    // select programs
+    const programsSelectorQuery = 'select#dlObject';
+    await page.waitForSelector(programsSelectorQuery);
+    await page.evaluate(
+      async (programs, programsSelectorQuery) => {
+        const programsSelector = document.querySelector(programsSelectorQuery);
+
+        // Deselect all options first
+        Array.from(programsSelector.options).forEach((option) => {
+          option.selected = false;
+        });
+
+        // select programs
+        programs.forEach((program) => {
+          const option = programsSelector.querySelector(
+            `[value="${program.value}"]`,
+          );
+          if (option) {
+            option.selected = true;
+          }
+        });
+
+        // Trigger the 'change' event to notify any listeners of the dropdown change
+        const event = new Event('change', { bubbles: true });
+        programsSelector.dispatchEvent(event);
+      },
+      programs,
+      programsSelectorQuery,
+    );
+
+    // click view timetable
+    {
+      const viewTimetableSelector = '#bGetTimetable';
+      await page.waitForSelector(viewTimetableSelector);
+      await page.click(viewTimetableSelector, {
+        waitUntil: 'domcontentloaded',
+      });
+    }
+
+    // check if valid selections were made
+    {
+      const errorTitleSelector = 'span#errTitle';
+      const errorLabelSelector = 'span#errLabel';
+
+      await page.waitForSelector('body');
+
+      const errorTitle = await page.$(errorTitleSelector);
+      const errorLabel = await page.$(errorLabelSelector);
+
+      if (errorTitle || errorLabel) {
+        // read error from error label
+        const error = await errorLabel.evaluate((element) =>
+          element.textContent.trim().replace('  ', ' '),
+        );
+
+        throw new Error(`Error: ${error}`);
+      }
+    }
+
+    // read courses from html
+    const courseIdsSelector =
+      'body > table.spreadsheet > tbody > tr:not(.columnTitles) > td:nth-child(1)';
+    await page.waitForSelector(courseIdsSelector);
+    const courseIdsSet = new Set(
+      await page.$$eval(courseIdsSelector, (elements) => {
+        return elements.map((element) =>
+          element.textContent.trim().replace('  ', ' '),
+        );
+      }),
+    );
+
+    return [...courseIdsSet];
   } finally {
     await page.close();
   }
