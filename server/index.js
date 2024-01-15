@@ -1,6 +1,6 @@
 import express from 'express';
 import cors from 'cors';
-import { getCampusOptions, getTimetable } from './pptr.js';
+import { getCampusOptions, getProgramsCourses, getTimetable } from './pptr.js';
 import { generateICS } from './generate-ics.js';
 
 const api = express();
@@ -42,8 +42,39 @@ api.get('/:campus/options', async (req, res) => {
       return;
     }
 
+    // TODO: get student programs
     const courses = await getCampusOptions(campus.trim().toLowerCase());
     res.send(courses);
+  } catch (e) {
+    console.error(e);
+    res.status(500).send('Internal server error');
+  }
+});
+
+api.post('/:campus/programs', async (req, res) => {
+  try {
+    const campus = req.params.campus;
+    if (!campus) {
+      console.log('Campus is required');
+      res.status(400).send('Campus is required');
+      return;
+    }
+    if (!campuses.includes(campus.trim().toLowerCase())) {
+      console.log('Invalid campus');
+      res.status(400).send('Invalid campus');
+      return;
+    }
+
+    const programs = req.body.programs;
+    if (!programs || programs.length === 0) {
+      console.log('Program is required');
+      res.status(400).send('Program is required');
+      return;
+    }
+
+    console.log('programs', programs);
+    const courseIds = await getProgramsCourses(campus, programs);
+    res.send(courseIds);
   } catch (e) {
     console.error(e);
     res.status(500).send('Internal server error');

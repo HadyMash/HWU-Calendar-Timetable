@@ -17,6 +17,9 @@ export function Home() {
   const navigate = useNavigate();
   const [campus, setCampus] = useState(null);
   const [coursesAbortController, setCoursesAbortController] = useState(null);
+  const [programsAbortController, setProgramsAbortController] = useState(null);
+  const [programs, setPrograms] = useState(null);
+  const [programModifiedCourses, setProgramModifiedCourses] = useState(false);
   const [courses, setCourses] = useState(null);
   const [weeks, setWeeks] = useState(null);
   const [alertOptions, setAlertOptions] = useState([
@@ -34,6 +37,7 @@ export function Home() {
     { value: -60 * 12, label: '12 hours before' },
     { value: -60 * 24, label: '1 day before' },
   ]);
+  const programsRef = useRef(null);
   const coursesRef = useRef(null);
   const weeksRef = useRef(null);
   const alertRef = useRef(null);
@@ -85,6 +89,7 @@ export function Home() {
     }
 
     // clear courses and weeks currently selected values
+    programsRef.current.clearValue();
     coursesRef.current.clearValue();
     weeksRef.current.clearValue();
 
@@ -101,6 +106,7 @@ export function Home() {
       if (response.status === 200) {
         console.log(response.data);
         const data = response.data;
+        setPrograms(data.programs);
         setCourses(data.courses);
         setWeeks(data.weeks);
       } else {
@@ -117,6 +123,53 @@ export function Home() {
     } finally {
       if (!cancelled) setLoadingCampusOptions(false);
     }
+  };
+
+  const getProgramsCourses = async (programs) => {
+    if (!programs || programs.length === 0) return;
+    setLoadingCampusOptions(true);
+
+    // cancel previous request if it exists
+    if (coursesAbortController) {
+      coursesAbortController.abort();
+    }
+
+    const abortController = new AbortController();
+    setProgramsAbortController(abortController);
+
+    let cancelled = false;
+    let courses = [];
+
+    try {
+      const response = await axios.post(`${host}/${campus}/programs`, {
+        signal: programsAbortController,
+        programs,
+      });
+
+      if (response.status === 200) {
+        console.log(response.data);
+        // flatten object into array
+        for (const key in Object.keys(response.data)) {
+          const course = response.data[key];
+          courses.push(course);
+        }
+      } else {
+        console.log(response.data);
+        showErrorMessage(`Error ${response.status}: ${response.data}`);
+      }
+    } catch (e) {
+      if (e.message === 'canceled') {
+        cancelled = true;
+        return;
+      }
+      console.error(e);
+      showErrorMessage(`Error: ${e.message}`);
+    } finally {
+      if (!cancelled) setLoadingCampusOptions(false);
+    }
+
+    setLoadingCampusOptions(false);
+    return courses;
   };
 
   const handleSubmit = async (e) => {
@@ -140,6 +193,10 @@ export function Home() {
 
     if (!courses || courses.length === 0) {
       showErrorMessage('Please select at least one course');
+      valid = false;
+    }
+    if (courses.length > 8) {
+      showErrorMessage('Please select no more than 8 courses');
       valid = false;
     }
     if (!weeks || weeks.length === 0) {
@@ -239,6 +296,58 @@ export function Home() {
             </tr>
             <tr>
               <td>
+                <label>Programs:</label>
+              </td>
+              <td>
+                <Select
+                  id={'programs'}
+                  name="programs"
+                  isLoading={loadingCampusOptions}
+                  isDisabled={
+                    loadingSubmit ||
+                    loadingCampusOptions ||
+                    !programs ||
+                    programs?.length === 0
+                  }
+                  isSearchable={true}
+                  options={programs}
+                  placeholder={
+                    loadingCampusOptions
+                      ? 'Loading...'
+                      : !campus
+                        ? 'Please select a campus'
+                        : !programs || programs?.length === 0
+                          ? 'No programs found'
+                          : 'Select programs'
+                  }
+                  ref={programsRef}
+                  onChange={async (selectedPrograms) => {
+                    console.log('programs selected:', selectedPrograms);
+                    if (!selectedPrograms || selectedPrograms.length === 0)
+                      return;
+                    setProgramModifiedCourses(true);
+                    const courseIds =
+                      await getProgramsCourses(selectedPrograms);
+                    console.log('course ids', courseIds);
+
+                    // select all courses with value in courseIds
+                    const selectedCourses = courses.filter((course) =>
+                      courseIds.includes(course.value),
+                    );
+                    console.log('selected courses', selectedCourses);
+                    coursesRef.current.setValue(selectedCourses);
+                  }}
+                  closeMenuOnSelect={false}
+                  isOptionDisabled={() =>
+                    programsRef.current.getValue().length >= 8
+                  }
+                  components={animatedComponents}
+                  isMulti
+                />
+              </td>
+            </tr>
+            <tr>
+              <td>
                 <label>Courses:</label>
               </td>
               <td>
@@ -266,6 +375,14 @@ export function Home() {
                   }
                   ref={coursesRef}
                   components={animatedComponents}
+                  onChange={() => {
+                    if (!programModifiedCourses) {
+                      // empty programs
+                      programsRef.current.setValue([]);
+                    } else {
+                      setProgramModifiedCourses(false);
+                    }
+                  }}
                   isOptionDisabled={() =>
                     coursesRef.current.getValue().length >= 8
                   }
