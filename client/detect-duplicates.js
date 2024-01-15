@@ -13,7 +13,7 @@ export function detectDuplicates(courses) {
             if (!duplicates[courseKey]) {
               duplicates[courseKey] = {};
             }
-            const key = `${dayKey} ${event1.type} ${event1.startTime}-${
+            const key = `${dayKey} ${event1.startTime}-${
               event1.endTime
             } weeks: ${event1.weeks.join(',')}`;
             if (!duplicates[courseKey][key]) {
