@@ -7,7 +7,7 @@ export function detectDuplicates(courses) {
 
       for (let i = 0; i < day.length; i++) {
         const event1 = day[i];
-        for (let j = i + 1; j < day.length; j++) {
+        for (let j = 0; j < day.length; j++) {
           const event2 = day[j];
           if (isDuplicateEvent(event1, event2)) {
             if (!duplicates[courseKey]) {
