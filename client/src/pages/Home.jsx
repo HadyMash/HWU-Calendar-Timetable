@@ -142,7 +142,7 @@ export function Home() {
       showErrorMessage('Please select at least one course');
       valid = false;
     }
-    if (!weeks) {
+    if (!weeks || weeks.length === 0) {
       showErrorMessage('Please select at least one week');
       valid = false;
     }
@@ -259,10 +259,10 @@ export function Home() {
                     loadingCampusOptions
                       ? 'Loading...'
                       : !campus
-                      ? 'Please select a campus'
-                      : !courses || courses?.length === 0
-                      ? 'No courses found'
-                      : 'Select courses'
+                        ? 'Please select a campus'
+                        : !courses || courses?.length === 0
+                          ? 'No courses found'
+                          : 'Select courses'
                   }
                   ref={coursesRef}
                   components={animatedComponents}
@@ -294,10 +294,10 @@ export function Home() {
                     loadingCampusOptions
                       ? 'Loading...'
                       : !campus
-                      ? 'Please select a campus'
-                      : !courses || courses?.length === 0
-                      ? 'No weeks found'
-                      : 'Select weeks'
+                        ? 'Please select a campus'
+                        : !courses || courses?.length === 0
+                          ? 'No weeks found'
+                          : 'Select weeks'
                   }
                   ref={weeksRef}
                   closeMenuOnSelect={false}
