@@ -199,7 +199,7 @@ export function Home() {
       showErrorMessage('Please select no more than 8 courses');
       valid = false;
     }
-    if (!weeks) {
+    if (!weeks || weeks.length === 0) {
       showErrorMessage('Please select at least one week');
       valid = false;
     }
