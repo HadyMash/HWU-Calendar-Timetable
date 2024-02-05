@@ -1,6 +1,6 @@
 # Heriot-Watt University Calendar Timetable
 
-***NOTE:*** **This project is in no way affiliated with Heriot-Watt University
+***NOTE:*** This project is not affiliated with Heriot-Watt University.
 
 You can use this to add your Heriot-Watt University timetable to your calendar app. It supports most popular calendar
 apps such as Apple and Google Calendar, or any calendar which supports importing with an iCal (.ics) file.
