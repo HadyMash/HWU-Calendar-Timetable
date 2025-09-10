@@ -6,7 +6,11 @@ import { generateICS } from './generate-ics.js';
 const api = express();
 api.use(express.json());
 
-const allowedOrigins = ['https://hadymash.github.io'];
+const allowedOrigins = [
+  'https://hadymash.github.io',
+  'http://localhost',
+  'http://localhost:5173',
+];
 const corsOptions = {
   origin: function (origin, callback) {
     if (allowedOrigins.indexOf(origin) !== -1 || !origin) {

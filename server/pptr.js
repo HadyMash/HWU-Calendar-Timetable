@@ -21,7 +21,8 @@ const campusTimetableUrls = {
     'https://timetable.hw.ac.uk/WebTimetables/LiveSB/login.aspx',
 };
 
-const browser = await puppeteer.launch({ headless: 'new' });
+// const browser = await puppeteer.launch({ headless: 'new' });
+const browser = await puppeteer.launch({ headless: false });
 
 async function navigateToCourses(page, url) {
   await page.setViewport({ width: 1920, height: 1080 });
@@ -172,6 +173,58 @@ export async function getProgramsCourses(campus, programs) {
       await select.select(...values);
     }
 
+    async function selectByText(selector, searchTexts) {
+      await page.waitForSelector(selector);
+      const selectElement = await page.$(selector);
+
+      const options = await selectElement.$$eval('option', (options) => {
+        return options.map((option) => ({
+          value: option.value,
+          text: option.textContent.trim(),
+        }));
+      });
+
+      for (const searchText of searchTexts) {
+        const matchingOption = options.find((option) => {
+          const normalizedText = option.text.toLowerCase().replace(/\s+/g, '');
+
+          if (searchText === 'dayevening') {
+            // Look for "day" and "evening" anywhere in the text
+            return (
+              normalizedText.includes('day') &&
+              normalizedText.includes('evening')
+            );
+          } else if (searchText === 'allday') {
+            // Look for "all" and "day" anywhere in the text
+            return (
+              normalizedText.includes('all') && normalizedText.includes('day')
+            );
+          } else if (searchText === 'workingday') {
+            // Look for "working" and "day" anywhere in the text
+            return (
+              normalizedText.includes('working') &&
+              normalizedText.includes('day')
+            );
+          } else {
+            // Fallback to original behavior for other search terms
+            const normalizedSearch = searchText
+              .toLowerCase()
+              .replace(/\s+/g, '');
+            return normalizedText.includes(normalizedSearch);
+          }
+        });
+
+        if (matchingOption) {
+          await selectElement.select(matchingOption.value);
+          return;
+        }
+      }
+
+      throw new Error(
+        `No option found matching any of: ${searchTexts.join(', ')}`,
+      );
+    }
+
     // select all possible week options
     const weeksSelectorQuery = 'select#lbWeeks';
     await page.waitForSelector(weeksSelectorQuery);
@@ -187,15 +240,12 @@ export async function getProgramsCourses(campus, programs) {
     const allDays = '1-7';
     await select('select#lbDays', [allDays]);
 
-    if (campus.toLowerCase() === 'dubai') {
-      // select DayEvening
-      const dayEvening = '1-56';
-      await select('select#dlPeriod', [dayEvening]);
-    } else if (campus.toLowerCase() === 'malaysia') {
-      // select All Day
-      const allDay = '1-60';
-      await select('select#dlPeriod', [allDay]);
-    }
+    // select DayEvening/All Day/Working Day based on text content
+    await selectByText('select#dlPeriod', [
+      'dayevening',
+      'allday',
+      'workingday',
+    ]);
 
     // select list view
     const listView =
@@ -472,6 +522,58 @@ export async function getTimetable(campus, courses, weeks) {
       await select.select(...values);
     }
 
+    async function selectByText(selector, searchTexts) {
+      await page.waitForSelector(selector);
+      const selectElement = await page.$(selector);
+
+      const options = await selectElement.$$eval('option', (options) => {
+        return options.map((option) => ({
+          value: option.value,
+          text: option.textContent.trim(),
+        }));
+      });
+
+      for (const searchText of searchTexts) {
+        const matchingOption = options.find((option) => {
+          const normalizedText = option.text.toLowerCase().replace(/\s+/g, '');
+
+          if (searchText === 'dayevening') {
+            // Look for "day" and "evening" anywhere in the text
+            return (
+              normalizedText.includes('day') &&
+              normalizedText.includes('evening')
+            );
+          } else if (searchText === 'allday') {
+            // Look for "all" and "day" anywhere in the text
+            return (
+              normalizedText.includes('all') && normalizedText.includes('day')
+            );
+          } else if (searchText === 'workingday') {
+            // Look for "working" and "day" anywhere in the text
+            return (
+              normalizedText.includes('working') &&
+              normalizedText.includes('day')
+            );
+          } else {
+            // Fallback to original behavior for other search terms
+            const normalizedSearch = searchText
+              .toLowerCase()
+              .replace(/\s+/g, '');
+            return normalizedText.includes(normalizedSearch);
+          }
+        });
+
+        if (matchingOption) {
+          await selectElement.select(matchingOption.value);
+          return;
+        }
+      }
+
+      throw new Error(
+        `No option found matching any of: ${searchTexts.join(', ')}`,
+      );
+    }
+
     // select courses
     await select('select#dlObject', courses);
 
@@ -483,13 +585,18 @@ export async function getTimetable(campus, courses, weeks) {
     await select('select#lbDays', [allDays]);
 
     if (campus.toLowerCase() === 'dubai') {
-      // select DayEvening
-      const dayEvening = '1-56';
-      await select('select#dlPeriod', [dayEvening]);
+      // select DayEvening based on text content
+      await selectByText('select#dlPeriod', ['dayevening', 'workingday']);
     } else if (campus.toLowerCase() === 'malaysia') {
-      // select All Day
-      const allDay = '1-60';
-      await select('select#dlPeriod', [allDay]);
+      // select All Day based on text content
+      await selectByText('select#dlPeriod', ['allday', 'workingday']);
+    } else {
+      // for other campuses, try all options
+      await selectByText('select#dlPeriod', [
+        'dayevening',
+        'allday',
+        'workingday',
+      ]);
     }
 
     // select list view
